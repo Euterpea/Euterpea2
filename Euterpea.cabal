@@ -1,0 +1,70 @@
+name:           Euterpea
+version:        2.0.0
+Cabal-Version:  >= 1.8
+license:        BSD3
+license-file:	License
+copyright:      Copyright (c) 2008-2015 Euterpea authors
+category:       Sound
+stability:      experimental
+build-type:     Custom
+author:         Paul Hudak <paul.hudak@yale.edu>, 
+                Eric Cheng <eric.cheng@aya.yale.edu>,
+                Hai (Paul) Liu <hai.liu@aya.yale.edu>,
+				Donya Quick <donya.quick@yale.edu>,
+				Dan Winograd-Cort <daniel.winograd-cort@yale.edu>
+maintainer:     Donya Quick <donya.quick@yale.edu>,
+                Dan Winograd-Cort <daniel.winograd-cort@yale.edu>
+bug-reports:    https://github.com/Euterpea/Euterpea/issues
+homepage:       http://haskell.cs.yale.edu/
+synopsis:       Library for computer music research and education
+description:
+        Euterpea is a domain-specific language embedded in Haskell for 
+        computer music research, education, and development, providing
+        both note-level and signal-level abstractions.  It is a descendant
+        of Haskore and HasSound, and is intended for both educational purposes
+        as well as serious computer music applications.  Euterpea is a 
+        wide-spectrum DSL, suitable for high-level music representation, 
+        algorithmic composition, and analysis; mid-level concepts such as 
+        MIDI; and low-level audio processing, sound synthesis, and instrument
+        design.  It also includes a "musical user interface," a set of 
+        computer-music specific GUI widgets such as keyboards, pushbuttons, 
+        sliders, and so on.  The performance of Euterpea is intended to be 
+        as good as any other computer music language, with the goal of being 
+        able to develop real-time applications, using both MIDI and a 
+        high-performance back-end for real-time audio.  
+extra-source-files:
+        ReadMe.txt,
+        Euterpea/Examples/EnableGUI.hs
+
+Library
+  hs-source-dirs: .
+  ghc-options: -O2 -funbox-strict-fields -fexcess-precision
+  extensions: CPP
+  exposed-modules: 
+        Euterpea,
+        Control.Arrow.ArrowP,
+        Control.SF.SF,
+        Euterpea.IO.Audio.Basics,
+        Euterpea.IO.Audio.BasicSigFuns,
+        Euterpea.IO.Audio.IO,
+        Euterpea.IO.Audio.Render,
+        Euterpea.IO.Audio.Types,
+        Euterpea.IO.Audio.CSound,
+        Euterpea.IO.Audio,
+        Euterpea.IO.MIDI.MidiIO, 
+        Euterpea.IO.MIDI.FromMidi,
+        Euterpea.IO.MIDI.GeneralMidi,
+        Euterpea.IO.MIDI.ToMidi,
+        Euterpea.IO.MIDI.Play,
+        Euterpea.IO.MIDI.ExportMidiFile,
+        Euterpea.IO.MIDI,
+        Euterpea.Music.Note.Music
+  other-modules:
+  build-depends:
+        base >= 3 && < 5, arrows >= 0.4, array, deepseq, random,
+        PortMidi, HCodecs >= 0.2, 
+        stm, containers, bytestring, heap == 0.6.0, 
+        markov-chain, pure-fft, 
+        UISF >= 0.4
+  if (impl(ghc >= 6.10))
+    build-depends: base >= 4 && < 5, ghc-prim
