@@ -493,10 +493,10 @@ rather than wrapping it with Modify. The following functions allow this.
 >   if eTime e1 < eTime e2  then  e1  : merge es1 b
 >                           else  e2  : merge a es2
 
-> data MContext = MContext {cTime    :: PTime, 
->                           cInst    :: InstrumentName, 
->                           cDur     :: DurT,
->                           cVol     :: Volume}
+> data MContext = MContext {mcTime    :: PTime, 
+>                           mcInst    :: InstrumentName, 
+>                           mcDur     :: DurT,
+>                           mcVol     :: Volume}
 >     deriving Show
 
 > perform :: (ToMusic1 a) => Music a -> Performance
@@ -507,23 +507,23 @@ rather than wrapping it with Modify. The following functions allow this.
 
 > perform1Dur :: Music1 -> (Performance, DurT)
 > perform1Dur = conversion defCon . applyControls where
->     defCon  = MContext {cTime = 0, cInst = AcousticGrandPiano, cDur = metro 120 qn, cVol=127}
+>     defCon  = MContext {mcTime = 0, mcInst = AcousticGrandPiano, mcDur = metro 120 qn, mcVol=127}
 >     -- timing conversions
 >     metro :: Int -> Dur -> DurT
 >     metro setting dur  = 60 / (fromIntegral setting * dur)
 
 > conversion :: MContext -> Music1 -> (Performance, DurT)
-> conversion c@MContext{cTime=t, cDur=dt} (Prim (Note d p)) = ([noteToMEvent c d p], d*dt)
-> conversion c@MContext{cTime=t, cDur=dt}  (Prim (Rest d)) = ([], d*dt)
-> conversion c@MContext{cTime=t, cDur=dt} (m1 :+: m2) = 
+> conversion c@MContext{mcTime=t, mcDur=dt} (Prim (Note d p)) = ([noteToMEvent c d p], d*dt)
+> conversion c@MContext{mcTime=t, mcDur=dt}  (Prim (Rest d)) = ([], d*dt)
+> conversion c@MContext{mcTime=t, mcDur=dt} (m1 :+: m2) = 
 >     let (evs1, d1) = conversion c m1
->         (evs2, d2) = conversion c{cTime = t+d1} m2
+>         (evs2, d2) = conversion c{mcTime = t+d1} m2
 >     in  (evs1 ++ evs2, d1+d2)
-> conversion c@MContext{cTime=t, cDur=dt} (m1 :=: m2) = 
+> conversion c@MContext{mcTime=t, mcDur=dt} (m1 :=: m2) = 
 >     let (evs1, d1) = conversion c m1
 >         (evs2, d2) = conversion c m2
 >     in  (merge evs1 evs2, max d1 d2)
-> conversion c (Modify (Instrument i) m) = conversion c{cInst=i} m
+> conversion c (Modify (Instrument i) m) = conversion c{mcInst=i} m
 > conversion c (Modify (Phrase pas) m) = phraseToMEvents c pas m
 > conversion c (Modify x m) = conversion c m -- Transpose and Tempo addressed by applyControls
 
@@ -538,7 +538,7 @@ rather than wrapping it with Modify. The following functions allow this.
 
 > phraseToMEvents :: MContext -> [PhraseAttribute] -> Music1 -> (Performance, DurT)
 > phraseToMEvents c [] m = conversion c m
-> phraseToMEvents c@MContext{cTime=t, cInst=i, cDur=dt} (pa:pas) m =
+> phraseToMEvents c@MContext{mcTime=t, mcInst=i, mcDur=dt} (pa:pas) m =
 >  let  pfd@(pf,dur)  =  phraseToMEvents c pas m
 >       loud x        =  phraseToMEvents c (Dyn (Loudness x) : pas) m
 >       stretch x     =  let  t0 = eTime (head pf);  r  = x/dur
@@ -562,7 +562,7 @@ rather than wrapping it with Modify. The following functions allow this.
 >           PPP  -> loud 40;       PP -> loud 50;   P    -> loud 60
 >           MP   -> loud 70;       SF -> loud 80;   MF   -> loud 90
 >           NF   -> loud 100;      FF -> loud 110;  FFF  -> loud 120
->    Dyn (Loudness x)     ->  phraseToMEvents c{cVol = round x} pas m
+>    Dyn (Loudness x)     ->  phraseToMEvents c{mcVol = round x} pas m
 >    Dyn (Crescendo x)    ->  inflate   x ; Dyn (Diminuendo x)  -> inflate (-x)
 >    Tmp (Ritardando x)   ->  stretch   x ; Tmp (Accelerando x) -> stretch (-x)
 >    Art (Staccato x)     ->  (map (\e-> e {eDur = x * eDur e}) pf, dur)
