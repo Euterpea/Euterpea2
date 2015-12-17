@@ -4,7 +4,7 @@
 {-# LINE 16 "GeneralMidi.lhs" #-}
 module Euterpea.IO.MIDI.GeneralMidi where
 
-import Euterpea.Music.Note.Music (InstrumentName(..))
+import Euterpea.Music (InstrumentName(..))
 
 fromGM :: Int -> InstrumentName
 fromGM i | i >= 0 && i <= 127 = toEnum i

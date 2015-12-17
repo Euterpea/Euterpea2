@@ -14,6 +14,7 @@ module Euterpea.IO.MIDI
   , InputDeviceID         -- newtype InputDeviceID
   , module Euterpea.IO.MIDI.ToMidi
   , module Euterpea.IO.MIDI.ExportMidiFile
+  , module Euterpea.IO.MIDI.Play
   ) where
 
 import Euterpea.IO.MIDI.FromMidi

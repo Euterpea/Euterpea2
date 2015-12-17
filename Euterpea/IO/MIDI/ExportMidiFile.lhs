@@ -268,15 +268,15 @@ USAGE
 
 The exportMidiFile can now be used as follows in place of Codec.Midi's exportFile:
 
- writeMidi :: (Performable a) => FilePath -> Music a -> IO ()
+ writeMidi :: (ToMusic1 a) => FilePath -> Music a -> IO ()
  writeMidi fn = exportMidiFile fn . testMidi
 
- writeMidiA :: (Performable a) => FilePath -> PMap Note1 -> Context Note1 -> Music a -> IO ()
+ writeMidiA :: (ToMusic1 a) => FilePath -> PMap Note1 -> Context Note1 -> Music a -> IO ()
  writeMidiA fn pm con m = exportMidiFile fn $ testMidiA pm con m
 
- test :: (Performable a) => Music a -> IO ()
+ test :: (ToMusic1 a) => Music a -> IO ()
  test = exportMidiFile "test.mid" . testMidi
  
- testA :: Performable a => PMap Note1 -> Context Note1 -> Music a -> IO ()
+ testA :: ToMusic1 a => PMap Note1 -> Context Note1 -> Music a -> IO ()
  testA pm con m = exportMidiFile "test.mid" (testMidiA pm con m)
  

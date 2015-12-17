@@ -2,7 +2,7 @@
 > {-# OPTIONS -XTypeSynonymInstances #-}
 
 > module Euterpea (
->   module Euterpea.Music.Note.Music,
+>   module Euterpea.Music,
 >   module Euterpea.IO.Audio,
 >   module Euterpea.IO.MIDI,
 >   module Control.Arrow,
@@ -10,7 +10,7 @@
 >   exportFile, importFile
 >   ) where
 >
-> import Euterpea.Music.Note.Music 
+> import Euterpea.Music
 > import Euterpea.IO.Audio
 > import Euterpea.IO.MIDI
 > import Control.Arrow

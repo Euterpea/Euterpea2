@@ -1,5 +1,5 @@
 > module Euterpea.IO.MIDI.FromMidi (fromMidi) where
-> import Euterpea.Music.Note.Music
+> import Euterpea.Music
 > import Euterpea.IO.MIDI.ToMidi
 > import Euterpea.IO.MIDI.GeneralMidi
 > import Data.List

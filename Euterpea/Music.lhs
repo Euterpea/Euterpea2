@@ -1,7 +1,7 @@
 
 > {-#  LANGUAGE FlexibleInstances, TypeSynonymInstances  #-}
 
-> module Euterpea.Music.Note.Music where
+> module Euterpea.Music where
 
 > infixr 5 :+:, :=:
 
@@ -138,16 +138,16 @@ A new type class to allow for musical polymorphism that ultimately
 must be converted to Music1 to be converted to MIDI format through
 the MEvent framework.
 
-> class Performable a where
+> class ToMusic1 a where
 >     toMusic1 :: Music a -> Music1
 
-> instance Performable Pitch where
+> instance ToMusic1 Pitch where
 >     toMusic1 = mMap (\p -> (p, []))
 
-> instance Performable (Pitch, Volume) where
+> instance ToMusic1 (Pitch, Volume) where
 >     toMusic1  = mMap (\(p, v) -> (p, [Volume v]))
 
-> instance Performable (Note1) where
+> instance ToMusic1 (Note1) where
 >     toMusic1 = id
 
 > note            :: Dur -> a -> Music a
@@ -499,14 +499,14 @@ rather than wrapping it with Modify. The following functions allow this.
 >                           cVol     :: Volume}
 >     deriving Show
 
-> perform :: (Performable a) => Music a -> Performance
+> perform :: (ToMusic1 a) => Music a -> Performance
 > perform = perform1 . toMusic1
 
 > perform1 :: Music1 -> Performance
-> perform1 = fst . perfDur
+> perform1 = fst . perform1Dur
 
-> perfDur :: Music1 -> (Performance, DurT)
-> perfDur = conversion defCon . applyControls where
+> perform1Dur :: Music1 -> (Performance, DurT)
+> perform1Dur = conversion defCon . applyControls where
 >     defCon  = MContext {cTime = 0, cInst = AcousticGrandPiano, cDur = metro 120 qn, cVol=127}
 >     -- timing conversions
 >     metro :: Int -> Dur -> DurT

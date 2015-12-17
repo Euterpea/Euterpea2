@@ -2,7 +2,7 @@
 
 > module Euterpea.IO.MIDI.ToMidi where
 
-> import Euterpea.Music.Note.Music
+> import Euterpea.Music
 > import Euterpea.IO.MIDI.GeneralMidi
 > import Euterpea.IO.MIDI.MidiIO
 > import Euterpea.IO.MIDI.ExportMidiFile
@@ -107,10 +107,10 @@
 >            --  the GM name for drums is unimportant, only channel 9
 
 
-> writeMidi :: Performable a => FilePath -> Music a -> IO ()
+> writeMidi :: ToMusic1 a => FilePath -> Music a -> IO ()
 > writeMidi fn m = exportMidiFile fn $ toMidi $ perform m
 
- play :: Performable a => Music a -> IO ()
+ play :: ToMusic1 a => Music a -> IO ()
  play = playM . toMidi . perform
 
  playM :: Midi -> IO ()

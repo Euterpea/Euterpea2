@@ -42,6 +42,7 @@ Library
   extensions: CPP
   exposed-modules: 
         Euterpea,
+        Euterpea.Music,
         Control.Arrow.ArrowP,
         Control.SF.SF,
         Euterpea.IO.Audio.Basics,
@@ -57,8 +58,7 @@ Library
         Euterpea.IO.MIDI.ToMidi,
         Euterpea.IO.MIDI.Play,
         Euterpea.IO.MIDI.ExportMidiFile,
-        Euterpea.IO.MIDI,
-        Euterpea.Music.Note.Music
+        Euterpea.IO.MIDI
   other-modules:
   build-depends:
         base >= 3 && < 5, arrows >= 0.4, array, deepseq, random,

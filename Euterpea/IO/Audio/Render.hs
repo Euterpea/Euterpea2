@@ -13,7 +13,7 @@ import Control.Arrow.Operations
 import Control.Arrow.ArrowP
 import Control.SF.SF
 
-import Euterpea.Music.Note.Music
+import Euterpea.Music
 import Euterpea.IO.Audio.Basics
 import Euterpea.IO.Audio.Types
 
@@ -108,7 +108,7 @@ pSwitch col esig mod =
       outA -< as
 
 
-renderSF :: (Clock p, Performable a, AudioSample b) => 
+renderSF :: (Clock p, ToMusic1 a, AudioSample b) => 
             Music a 
          -> InstrMap (Signal p () b) 
          -> (Double, Signal p () b)
@@ -116,7 +116,7 @@ renderSF :: (Clock p, Performable a, AudioSample b) =>
             -- and a signal function that plays the music.
 
 renderSF m im = 
-    let (pf, d) = perfDur $ toMusic1 m -- Updated 16-Dec-2015 
+    let (pf, d) = perform1Dur $ toMusic1 m -- Updated 16-Dec-2015 
         evtsf = toEvtSF pf im
         allsf = pSwitch M.empty evtsf modSF
         sf = allsf >>> arr (foldl' mix zero . M.elems)  -- add up all samples

@@ -8,7 +8,7 @@ module Euterpea.IO.Audio.Basics (
   pchToHz, apToHz
 ) where
 
-import Euterpea.Music.Note.Music
+import Euterpea.Music
 import Euterpea.IO.Audio.Types
 import Control.Arrow
 import Control.Arrow.Operations

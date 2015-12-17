@@ -19,7 +19,7 @@
 > import Data.List
 > import Euterpea.IO.MIDI.MidiIO
 > import Euterpea.IO.MIDI.ToMidi
-> import Euterpea.Music.Note.Music
+> import Euterpea.Music
 > import Sound.PortMidi
 
 --------------------------
@@ -45,21 +45,21 @@ device as set by the operating system, and using a closing delay of 1.0sec.
 
 New implementation of play using default parameters:
 
-> play :: (Performable a, NFData a) => Music a -> IO ()
+> play :: (ToMusic1 a, NFData a) => Music a -> IO ()
 > play = playC defParams
 
-> playS :: (Performable a, NFData a) => Music a -> IO ()
+> playS :: (ToMusic1 a, NFData a) => Music a -> IO ()
 > playS = playC defParams{strict=True}
 
-> playDev :: (Performable a, NFData a) => Int -> Music a -> IO ()
+> playDev :: (ToMusic1 a, NFData a) => Int -> Music a -> IO ()
 > playDev i = playC defParams{devID = Just $ unsafeOutputID i}
 
-> playDevS :: (Performable a, NFData a) => Int -> Music a -> IO()
+> playDevS :: (ToMusic1 a, NFData a) => Int -> Music a -> IO()
 > playDevS i = playC defParams{strict=True, devID = Just $ unsafeOutputID i}
 
 "Custom play" interface:
 
-> playC :: (Performable a, NFData a) => PlayParams -> Music a -> IO ()
+> playC :: (ToMusic1 a, NFData a) => PlayParams -> Music a -> IO ()
 > playC p = if strict p then playStrict p else playInf p
 
 Getting a list of all MIDI input and output devices, showing both 
@@ -82,7 +82,7 @@ Strict playback: timing will be as close to perfect as possible, but the
 Music value must be finite. Timing will be correct starting from the first 
 note, even if there is a long computation delay prior to any sound. 
 
-> playStrict :: (Performable a, NFData a) => PlayParams -> Music a -> IO ()
+> playStrict :: (ToMusic1 a, NFData a) => PlayParams -> Music a -> IO ()
 > playStrict p m = m `deepseq`
 >     let x = toMidi (perfAlg p $ toMusic1 m) 
 >     in  x `deepseq` playM' (devID p) x
@@ -102,7 +102,7 @@ with the compromise that timing may be imperfect due to lazy evaluation of
 the Music value. Delays may happen if a section of the Music value is time-
 consuming to compute. Infinite parallelism is not supported.
 
-> playInf :: Performable a => PlayParams -> Music a -> IO ()
+> playInf :: ToMusic1 a => PlayParams -> Music a -> IO ()
 > playInf p m = handleCtrlC $ do
 >     initializeMidi
 >     (maybe (defaultOutput playRec) playRec (devID p)) $ musicToMsgs' p m
@@ -158,7 +158,7 @@ pairs. This is needed to avoid timing issues associated with using ANote
 and trying to call terminateMIDI, since if there is an ANote at the end
 it will sometimes have its NoteOff lost, which can cause errors.
 
-> musicToMsgs' :: (Performable a) => PlayParams -> Music a -> [(Time, MidiMessage)]
+> musicToMsgs' :: (ToMusic1 a) => PlayParams -> Music a -> [(Time, MidiMessage)]
 > musicToMsgs' p m = 
 >     let perf = perfAlg p $ toMusic1 m -- obtain the performance 
 >         evsA = channelMap (chanPolicy p) [] perf -- time-stamped ANote values
