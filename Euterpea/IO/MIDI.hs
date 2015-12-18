@@ -15,6 +15,7 @@ module Euterpea.IO.MIDI
   , module Euterpea.IO.MIDI.ToMidi
   , module Euterpea.IO.MIDI.ExportMidiFile
   , module Euterpea.IO.MIDI.Play
+  , module Euterpea.IO.MIDI.MEvent
   ) where
 
 import Euterpea.IO.MIDI.FromMidi
@@ -23,3 +24,4 @@ import Euterpea.IO.MIDI.MidiIO
 import Euterpea.IO.MIDI.ToMidi
 import Euterpea.IO.MIDI.ExportMidiFile
 import Euterpea.IO.MIDI.Play
+import Euterpea.IO.MIDI.MEvent

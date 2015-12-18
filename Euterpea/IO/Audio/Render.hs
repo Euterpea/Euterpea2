@@ -14,6 +14,7 @@ import Control.Arrow.ArrowP
 import Control.SF.SF
 
 import Euterpea.Music
+import Euterpea.IO.MIDI.MEvent
 import Euterpea.IO.Audio.Basics
 import Euterpea.IO.Audio.Types
 

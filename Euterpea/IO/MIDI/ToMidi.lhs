@@ -3,6 +3,7 @@
 > module Euterpea.IO.MIDI.ToMidi where
 
 > import Euterpea.Music
+> import Euterpea.IO.MIDI.MEvent
 > import Euterpea.IO.MIDI.GeneralMidi
 > import Euterpea.IO.MIDI.MidiIO
 > import Euterpea.IO.MIDI.ExportMidiFile

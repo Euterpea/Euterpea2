@@ -52,6 +52,7 @@ Library
         Euterpea.IO.Audio.Types,
         Euterpea.IO.Audio.CSound,
         Euterpea.IO.Audio,
+        Euterpea.IO.MIDI.MEvent,
         Euterpea.IO.MIDI.MidiIO, 
         Euterpea.IO.MIDI.FromMidi,
         Euterpea.IO.MIDI.GeneralMidi,

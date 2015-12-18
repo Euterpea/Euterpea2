@@ -19,6 +19,7 @@
 > import Data.List
 > import Euterpea.IO.MIDI.MidiIO
 > import Euterpea.IO.MIDI.ToMidi
+> import Euterpea.IO.MIDI.MEvent
 > import Euterpea.Music
 > import Sound.PortMidi
 

@@ -3,7 +3,6 @@
 --  HSoM/GeneralMidi.lhs.  (See HSoM/MakeCode.bat.)
 {-# LINE 16 "GeneralMidi.lhs" #-}
 module Euterpea.IO.MIDI.GeneralMidi where
-
 import Euterpea.Music (InstrumentName(..))
 
 fromGM :: Int -> InstrumentName
