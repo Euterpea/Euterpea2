@@ -43,6 +43,12 @@
 >     -- timing musicToMEventss
 >     metro :: Int -> Dur -> DurT
 >     metro setting dur  = 60 / (fromIntegral setting * dur)
+>     applyControls :: Music1 -> Music1
+>     applyControls (Modify (Tempo r) m) = tempo' r $ applyControls m
+>     applyControls (Modify (Transpose k) m) = transpose1 k $ applyControls m
+>     applyControls (m1 :+: m2) = applyControls m1 :+: applyControls m2
+>     applyControls (m1 :=: m2) = applyControls m1 :=: applyControls m2
+>     applyControls x = x
 
 > musicToMEvents :: MContext -> Music1 -> (Performance, DurT)
 > musicToMEvents c@MContext{mcTime=t, mcDur=dt} (Prim (Note d p)) = ([noteToMEvent c d p], d*dt)

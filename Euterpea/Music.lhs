@@ -467,6 +467,15 @@ rather than wrapping it with Modify. The following functions allow this.
 > applyControls (m1 :=: m2) = applyControls m1 :=: applyControls m2
 > applyControls x = x
 
+> instrument' :: InstrumentName -> Music a -> Music a
+> instrument' i m = Modify (Instrument i) $ stripInst m
+
+> stripInst :: Music a -> Music a
+> stripInst (Modify (Instrument i) m) = stripInst m
+> stripInst (Modify c m) = stripInst m
+> stripInst (m1 :+: m2) = stripInst m1 :+: stripInst m2
+> stripInst (m1 :=: m2) = stripInst m1 :=: stripInst m2
+> stripInst m = m
 
 
 

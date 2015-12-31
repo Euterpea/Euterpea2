@@ -65,32 +65,12 @@ versions of the unit generators.
 >   samples, milliseconds, seconds, countTime
 >   ) where
 
-> -- oscil, oscili, oscils, oscil1, oscil1i,
-> -- table, tablei, tableIx, tableiIx,
-> -- buzz,
-> -- delayt, 
-> -- delay, vdelay,
-> -- comb,
-> -- reson, areson,
-> -- tone, atone,
-> -- rand, randi, randh,
-> -- line, 
-> -- expon, linseg, expseg, linen, 
-> -- envlpx,
-> -- integral,
-> -- gen05, gen05', exponential1,
-> -- gen07, gen07', lineSeg1,
-> -- gen09, gen09', compSine2,
-> -- gen10, gen10', compSine1,
-> -- gen12, gen12',
-> -- butterlp, butterhp, butterbp, butterbr,
 
 > import Euterpea.IO.Audio.Basics
 > import Euterpea.IO.Audio.Types
 > import Control.Arrow
 > import Control.Arrow.Operations
 > import Control.Arrow.ArrowP
-> import FRP.UISF.AuxFunctions (SEvent, constA)
 > import Data.Array.Base (unsafeAt)
 > import Data.Array.Unboxed
 
@@ -100,6 +80,9 @@ versions of the unit generators.
 
 > import GHC.IO
 > import System.Random
+
+> type SEvent a = Maybe a
+> constA = arr . const
 
 Helper Functions
 ----------------

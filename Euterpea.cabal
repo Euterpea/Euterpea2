@@ -64,8 +64,6 @@ Library
   build-depends:
         base >= 3 && < 5, arrows >= 0.4, array, deepseq, random,
         PortMidi, HCodecs >= 0.2, 
-        stm, containers, bytestring, heap == 0.6.0, 
-        markov-chain, pure-fft, 
-        UISF >= 0.4
+        stm, containers, bytestring, heap == 0.6.0
   if (impl(ghc >= 6.10))
     build-depends: base >= 4 && < 5, ghc-prim
