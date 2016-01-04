@@ -258,15 +258,15 @@ the MEvent framework.
 > line1  = foldr1 (:+:)
 > chord1 = foldr1 (:=:)
 
-> delayM      :: Dur -> Music a -> Music a
-> delayM d m  = rest d :+: m
+> offset      :: Dur -> Music a -> Music a
+> offset d m  = rest d :+: m
 
-> timesM      :: Int -> Music a -> Music a
-> timesM 0 m  = rest 0
-> timesM n m  = m :+: timesM (n-1) m
+> times      :: Int -> Music a -> Music a
+> times 0 m  = rest 0
+> times n m  = m :+: times (n-1) m
 
-> repeatM    :: Music a -> Music a
-> repeatM m  = m :+: repeatM m
+> forever    :: Music a -> Music a
+> forever m  = m :+: forever m
 
 > lineToList                    :: Music a -> [Music a]
 > lineToList (Prim (Rest 0))    = []
@@ -282,13 +282,19 @@ the MEvent framework.
 >        inv (Prim  (Rest d))      = rest d
 >   in line (map inv l)
 
-> retro, retroInvert, invertRetro :: Music Pitch -> Music Pitch
-> retro        = line . reverse . lineToList
+> retro               :: Music a -> Music a
+> retro n@(Prim _)    = n
+> retro (Modify c m)  = Modify c (retro m)
+> retro (m1 :+: m2)   = retro m2 :+: retro m1
+> retro (m1 :=: m2)   =  
+>    let  d1 = dur m1
+>         d2 = dur m2
+>    in if d1>d2  then retro m1 :=: (rest (d1-d2) :+: retro m2)
+>                 else (rest (d2-d1) :+: retro m1) :=: retro m2
+
+> retroInvert, invertRetro :: Music Pitch -> Music Pitch
 > retroInvert  = retro  . invert
 > invertRetro  = invert . retro
-
-> (=:=)        :: Dur -> Dur -> Music a -> Music a
-> old =:= new  =  tempo (new/old)
 
 > dur                       :: Music a -> Dur
 > dur (Prim (Note d _))     = d
@@ -298,40 +304,28 @@ the MEvent framework.
 > dur (Modify (Tempo r) m)  = dur m / r
 > dur (Modify _ m)          = dur m
 
-> revM               :: Music a -> Music a
-> revM n@(Prim _)    = n
-> revM (Modify c m)  = Modify c (revM m)
-> revM (m1 :+: m2)   = revM m2 :+: revM m1
-> revM (m1 :=: m2)   =  
->    let  d1 = dur m1
->         d2 = dur m2
->    in if d1>d2  then revM m1 :=: (rest (d1-d2) :+: revM m2)
->                 else (rest (d2-d1) :+: revM m1) :=: revM m2
-
-> takeM :: Dur -> Music a -> Music a
-> takeM d m | d <= 0            = rest 0
-> takeM d (Prim (Note oldD p))  = note (min oldD d) p
-> takeM d (Prim (Rest oldD))    = rest (min oldD d)
-> takeM d (m1 :=: m2)           = takeM d m1 :=: takeM d m2
-> takeM d (m1 :+: m2)           =  let  m'1  = takeM d m1
->                                       m'2  = takeM (d - dur m'1) m2
->                                  in m'1 :+: m'2
-> takeM d (Modify (Tempo r) m)  = tempo r (takeM (d*r) m)
-> takeM d (Modify c m)          = Modify c (takeM d m)
-
 > cut :: Dur -> Music a -> Music a
-> cut = takeM
+> cut d m | d <= 0            = rest 0
+> cut d (Prim (Note oldD p))  = note (min oldD d) p
+> cut d (Prim (Rest oldD))    = rest (min oldD d)
+> cut d (m1 :=: m2)           = cut d m1 :=: cut d m2
+> cut d (m1 :+: m2)           =  let  m'1  = cut d m1
+>                                     m'2  = cut (d - dur m'1) m2
+>                                in   m'1 :+: m'2
+> cut d (Modify (Tempo r) m)  = tempo r (cut (d*r) m)
+> cut d (Modify c m)          = Modify c (cut d m)
 
-> dropM :: Dur -> Music a -> Music a
-> dropM d m | d <= 0            = m
-> dropM d (Prim (Note oldD p))  = note (max (oldD-d) 0) p
-> dropM d (Prim (Rest oldD))    = rest (max (oldD-d) 0)
-> dropM d (m1 :=: m2)           = dropM d m1 :=: dropM d m2
-> dropM d (m1 :+: m2)           =  let  m'1  = dropM d m1
->                                       m'2  = dropM (d - dur m1) m2
->                                  in m'1 :+: m'2
-> dropM d (Modify (Tempo r) m)  = tempo r (dropM (d*r) m)
-> dropM d (Modify c m)          = Modify c (dropM d m)
+
+> remove :: Dur -> Music a -> Music a
+> remove d m | d <= 0            = m
+> remove d (Prim (Note oldD p))  = note (max (oldD-d) 0) p
+> remove d (Prim (Rest oldD))    = rest (max (oldD-d) 0)
+> remove d (m1 :=: m2)           = remove d m1 :=: remove d m2
+> remove d (m1 :+: m2)           =  let  m'1  = remove d m1
+>                                        m'2  = remove (d - dur m1) m2
+>                                   in   m'1 :+: m'2
+> remove d (Modify (Tempo r) m)  = tempo r (remove (d*r) m)
+> remove d (Modify c m)          = Modify c (remove d m)
 
 > removeZeros :: Music a -> Music a
 > removeZeros (Prim p)      = Prim p
@@ -376,21 +370,21 @@ the MEvent framework.
 > minL [d]     d' = min d d'
 > minL (d:ds)  d' = if d < d' then minL ds d' else d'
 
-> takeML :: LazyDur -> Music a -> Music a
-> takeML [] m                     = rest 0
-> takeML (d:ds) m | d <= 0        = takeML ds m
-> takeML ld (Prim (Note oldD p))  = note (minL ld oldD) p
-> takeML ld (Prim (Rest oldD))    = rest (minL ld oldD)
-> takeML ld (m1 :=: m2)           = takeML ld m1 :=: takeML ld m2
-> takeML ld (m1 :+: m2)           =  
->    let  m'1 = takeML ld m1
->         m'2 = takeML (map (\d -> d - dur m'1) ld) m2
+> cutL :: LazyDur -> Music a -> Music a
+> cutL [] m                     = rest 0
+> cutL (d:ds) m | d <= 0        = cutL ds m
+> cutL ld (Prim (Note oldD p))  = note (minL ld oldD) p
+> cutL ld (Prim (Rest oldD))    = rest (minL ld oldD)
+> cutL ld (m1 :=: m2)           = cutL ld m1 :=: cutL ld m2
+> cutL ld (m1 :+: m2)           =  
+>    let  m'1 = cutL ld m1
+>         m'2 = cutL (map (\d -> d - dur m'1) ld) m2
 >    in m'1 :+: m'2
-> takeML ld (Modify (Tempo r) m)  = tempo r (takeML (map (*r) ld) m)
-> takeML ld (Modify c m)          = Modify c (takeML ld m)
+> cutL ld (Modify (Tempo r) m)  = tempo r (cutL (map (*r) ld) m)
+> cutL ld (Modify c m)          = Modify c (cutL ld m)
 
 > (/=:)      :: Music a -> Music a -> Music a
-> m1 /=: m2  = takeML (durL m2) m1 :=: takeML (durL m1) m2
+> m1 /=: m2  = cutL (durL m2) m1 :=: cutL (durL m1) m2
 
 > data PercussionSound =
 >         AcousticBassDrum  --  MIDI Key 35

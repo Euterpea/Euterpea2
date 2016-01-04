@@ -1057,7 +1057,7 @@ Analogous to csound's gen07 routine.
 > tableLin_ :: StartPt -> [(SegLength, EndPt)] -> Bool -> Int -> Table
 > tableLin_     sp segs  = funToTable (interpLine sp segs interpStraightLine) 
 
-Make a table from a collection of sine waves at different offsets and
+Make a table from a collection of sine waves at different delays and
 strengths.
 
 Analogous to csound's gen09 routine.
@@ -1066,7 +1066,7 @@ Analogous to csound's gen09 routine.
 >          -- The size of the table to be produced.
 >       -> [(PartialNum, PartialStrength, PhaseOffset)]
 >          -- List of triples of the partial (0,1,...), partial
->          -- strength on [0,1], and phase offset on [0,360].
+>          -- strength on [0,1], and phase delay on [0,360].
 >       -> Table
 > tableSines3N  size ps = tableSines3_ ps True size
 > tableSines3 :: Int -> [(PartialNum, PartialStrength, PhaseOffset)] -> Table
@@ -1172,7 +1172,7 @@ Function to find a particular point at a particular strength
 
 > makeSineFun :: (PartialNum, PartialStrength, PhaseOffset)
 >                 -- Triple of the partial (0,1,...), partial strength
->                 -- on [0,1], and phase offset on [0,360].
+>                 -- on [0,1], and phase delay on [0,360].
 >              -> Double
 >                 -- The x coordinate for which to find f(x)=y
 >              -> Double
@@ -1185,7 +1185,7 @@ For a particular point, sum all partials.
 
 > makeCompositeSineFun :: [(PartialNum, PartialStrength, PhaseOffset)]
 >                         -- List of triples of the partial (0,1,...),
->                         -- partial strength on [0,1], and phase offset
+>                         -- partial strength on [0,1], and phase delay
 >                         -- on [0,360].
 >                      -> Double
 >                         -- The x coordinate for which to find f(x)=y

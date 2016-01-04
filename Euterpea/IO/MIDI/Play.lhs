@@ -33,14 +33,14 @@ Playback parameter data type.
 >     strict :: Bool, -- strict timing (False for infinite values)
 >     chanPolicy :: ChannelMapFun, -- channel assignment policy
 >     devID :: Maybe OutputDeviceID, -- output device (Nothing means to use the OS default)
->     closeDelay :: Time, -- delay in seconds to avoid truncated notes
+>     closeDelay :: Time, -- offset in seconds to avoid truncated notes
 >     perfAlg :: Music1 -> [MEvent]
 >     }
 
 Default parameters are the default pmap+context, allowing for infinite playback, 
 using a linear channel assignment policy for 16 channels with percussion on 
 channel 9 (which is channel 10 when indexing from 1), using the default MIDI 
-device as set by the operating system, and using a closing delay of 1.0sec.
+device as set by the operating system, and using a closing offset of 1.0sec.
 
 > defParams = PlayParams False (linearCP 16 9) Nothing 1.0 perform1
 
@@ -81,7 +81,7 @@ their device IDs and names.
 
 Strict playback: timing will be as close to perfect as possible, but the
 Music value must be finite. Timing will be correct starting from the first 
-note, even if there is a long computation delay prior to any sound. 
+note, even if there is a long computation offset prior to any sound. 
 
 > playStrict :: (ToMusic1 a, NFData a) => PlayParams -> Music a -> IO ()
 > playStrict p m = m `deepseq`
