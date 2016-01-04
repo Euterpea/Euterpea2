@@ -454,13 +454,6 @@ rather than wrapping it with Modify. The following functions allow this.
 > tempo' r (m1 :=: m2) = tempo' r m1 :=: tempo' r m2
 > tempo' r (Modify c m) = Modify c (tempo' r m) 
 
-> applyControls :: Music1 -> Music1
-> applyControls (Modify (Tempo r) m) = tempo' r $ applyControls m
-> applyControls (Modify (Transpose k) m) = transpose1 k $ applyControls m
-> applyControls (m1 :+: m2) = applyControls m1 :+: applyControls m2
-> applyControls (m1 :=: m2) = applyControls m1 :=: applyControls m2
-> applyControls x = x
-
 > instrument' :: InstrumentName -> Music a -> Music a
 > instrument' i m = Modify (Instrument i) $ stripInst m
 
