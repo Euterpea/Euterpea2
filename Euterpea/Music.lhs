@@ -441,28 +441,28 @@ the MEvent framework.
 Sometimes we may wish to alter the internal structure of a Music value
 rather than wrapping it with Modify. The following functions allow this.
 
-> transpose' :: AbsPitch -> Music Pitch -> Music Pitch
-> transpose' k = mMap (trans k)
+> shiftPitches :: AbsPitch -> Music Pitch -> Music Pitch
+> shiftPitches k = mMap (trans k)
 
-> transpose1 :: AbsPitch -> Music (Pitch, b) -> Music (Pitch, b)
-> transpose1 k = mMap (\(p,xs) -> (trans k p, xs))
+> shiftPitches1 :: AbsPitch -> Music (Pitch, b) -> Music (Pitch, b)
+> shiftPitches1 k = mMap (\(p,xs) -> (trans k p, xs))
 
-> tempo' :: Rational -> Music a -> Music a
-> tempo' r (Prim (Note d p)) = note (d/r) p
-> tempo' r (Prim (Rest d)) = rest (d/r)
-> tempo' r (m1 :+: m2) = tempo' r m1 :+: tempo' r m2
-> tempo' r (m1 :=: m2) = tempo' r m1 :=: tempo' r m2
-> tempo' r (Modify c m) = Modify c (tempo' r m) 
+> scaleDurations :: Rational -> Music a -> Music a
+> scaleDurations r (Prim (Note d p)) = note (d/r) p
+> scaleDurations r (Prim (Rest d)) = rest (d/r)
+> scaleDurations r (m1 :+: m2) = scaleDurations r m1 :+: scaleDurations r m2
+> scaleDurations r (m1 :=: m2) = scaleDurations r m1 :=: scaleDurations r m2
+> scaleDurations r (Modify c m) = Modify c (scaleDurations r m) 
 
-> instrument' :: InstrumentName -> Music a -> Music a
-> instrument' i m = Modify (Instrument i) $ stripInst m
+> changeInstrument :: InstrumentName -> Music a -> Music a
+> changeInstrument i m = Modify (Instrument i) $ removeInstruments m
 
-> stripInst :: Music a -> Music a
-> stripInst (Modify (Instrument i) m) = stripInst m
-> stripInst (Modify c m) = stripInst m
-> stripInst (m1 :+: m2) = stripInst m1 :+: stripInst m2
-> stripInst (m1 :=: m2) = stripInst m1 :=: stripInst m2
-> stripInst m = m
+> removeInstruments :: Music a -> Music a
+> removeInstruments (Modify (Instrument i) m) = removeInstruments m
+> removeInstruments (Modify c m) = removeInstruments m
+> removeInstruments (m1 :+: m2) = removeInstruments m1 :+: removeInstruments m2
+> removeInstruments (m1 :=: m2) = removeInstruments m1 :=: removeInstruments m2
+> removeInstruments m = m
 
 
 

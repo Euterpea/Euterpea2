@@ -44,8 +44,8 @@
 >     metro :: Int -> Dur -> DurT
 >     metro setting dur  = 60 / (fromIntegral setting * dur)
 >     applyControls :: Music1 -> Music1
->     applyControls (Modify (Tempo r) m) = tempo' r $ applyControls m
->     applyControls (Modify (Transpose k) m) = transpose1 k $ applyControls m
+>     applyControls (Modify (Tempo r) m) = scaleDurations r $ applyControls m
+>     applyControls (Modify (Transpose k) m) = shiftPitches1 k $ applyControls m
 >     applyControls (m1 :+: m2) = applyControls m1 :+: applyControls m2
 >     applyControls (m1 :=: m2) = applyControls m1 :=: applyControls m2
 >     applyControls x = x
