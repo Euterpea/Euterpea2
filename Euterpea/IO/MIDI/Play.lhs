@@ -1,5 +1,8 @@
 > module Euterpea.IO.MIDI.Play (
 >     play -- standard playback, allows infinite values
+>     ,playDev -- play to a custom device, allows infinite values
+>     ,playS -- play with strict timing (finite values only)
+>     ,playDevS -- play to a custom device with strict timing (finite values only)
 >     ,playC -- custom playback implementation to replace playA, playS, playDev, etc.
 >     ,devices -- function that prints available MIDI device information
 >     ,musicToMsgs' -- music to MIDI message conversion
@@ -312,3 +315,9 @@ instruments are found that are not accounted for, an error is thrown.
 
 > instance NFData InstrumentName where
 >     rnf x = ()
+
+> instance NFData NoteAttribute where
+>     rnf (Volume v) = rnf v
+>     rnf (Fingering f) = rnf f
+>     rnf (Dynamics d) = rnf d
+>     rnf (Params p) = rnf p
