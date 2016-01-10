@@ -4,7 +4,7 @@ module Euterpea.IO.Audio
     module Euterpea.IO.Audio.Types,
     module Euterpea.IO.Audio.IO,
     module Euterpea.IO.Audio.Render,
-	writeWav
+    writeWav
   ) where
 
 import Euterpea.IO.Audio.BasicSigFuns

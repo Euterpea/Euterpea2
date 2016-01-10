@@ -56,7 +56,7 @@ upsample f = g
 
 -- | Converting an AbsPitch to hertz (cycles per second):
 apToHz :: Floating a => AbsPitch -> a
-apToHz ap = 440 * 2 ** (fromIntegral (ap - absPitch (A,5)) / 12)
+apToHz ap = 440 * 2 ** (fromIntegral (ap - absPitch (A,4)) / 12)
 
 -- | Converting from a Pitch value to Hz:
 pchToHz :: Floating a => Pitch -> a

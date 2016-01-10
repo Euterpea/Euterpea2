@@ -221,8 +221,20 @@ the MEvent framework.
 > ddqn  = 7/16;  ddqnr  = rest ddqn  --  double-dotted quarter note rest
 > dden  = 7/32;  ddenr  = rest dden  --  double-dotted eighth note rest
 
+The conversion for Pitch and AbsPitch differs from previous versions
+of Euterpea. In Euterpea 1.x, (C,5) was pitch number 60, which is not
+the most common interpretation. While there is no universal standard 
+for which octave should be octave 0, it is far more common to have the
+pitch number relationship that (C,4) = 60. Since this change has been 
+requested many times in previous versions of Euterpea, the following 
+standard is now in place as of version 2.0.0:
+
+pitch 0 = (C,-1)
+pitch 60 = (C,4)
+pitch 127 = (G,9)
+
 > absPitch           :: Pitch -> AbsPitch
-> absPitch (pc,oct)  = 12*oct + pcToInt pc
+> absPitch (pc,oct)  = 12*(oct+1) + pcToInt pc
 
 > pcToInt     :: PitchClass -> Int
 > pcToInt pc  = case pc of
@@ -237,7 +249,7 @@ the MEvent framework.
 > pitch     :: AbsPitch -> Pitch
 > pitch ap  = 
 >     let (oct, n) = divMod ap 12
->     in  ([C,Cs,D,Ds,E,F,Fs,G,Gs,A,As,B] !! n, oct)
+>     in  ([C,Cs,D,Ds,E,F,Fs,G,Gs,A,As,B] !! n, oct-1)
 
 > trans      :: Int -> Pitch -> Pitch
 > trans i p  = pitch (absPitch p + i)
