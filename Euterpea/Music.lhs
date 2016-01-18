@@ -471,7 +471,7 @@ rather than wrapping it with Modify. The following functions allow this.
 
 > removeInstruments :: Music a -> Music a
 > removeInstruments (Modify (Instrument i) m) = removeInstruments m
-> removeInstruments (Modify c m) = removeInstruments m
+> removeInstruments (Modify c m) = Modify c $ removeInstruments m
 > removeInstruments (m1 :+: m2) = removeInstruments m1 :+: removeInstruments m2
 > removeInstruments (m1 :=: m2) = removeInstruments m1 :=: removeInstruments m2
 > removeInstruments m = m
