@@ -286,13 +286,27 @@ pitch 127 = (G,9)
 > lineToList _                  = 
 >     error "lineToList: argument not created by function line"
 
+> invertAt :: Pitch -> Music Pitch -> Music Pitch
+> invertAt pRef = mMap (\p -> pitch (2 * absPitch pRef - absPitch p))
+
+> invertAt1 :: Pitch -> Music (Pitch, a) -> Music (Pitch, a)
+> invertAt1 pRef = mMap (\(p,x) -> (pitch (2 * absPitch pRef - absPitch p),x))
+
 > invert :: Music Pitch -> Music Pitch
-> invert m   = 
->   let  l@(Prim (Note _ r) : _)  = lineToList m
->        inv (Prim  (Note d p))    = 
->                   note d (pitch (2 * absPitch r - absPitch p))
->        inv (Prim  (Rest d))      = rest d
->   in line (map inv l)
+> invert m = 
+>     let pRef = mFold pFun (++) (++) (flip const) m
+>     in  if null pRef then m -- no pitches in the structure!
+>         else invertAt (head pRef) m
+>     where pFun (Note d p) = [p]
+>           pFun _ = []
+
+> invert1 :: Music (Pitch,a) -> Music (Pitch,a)
+> invert1 m = 
+>     let pRef = mFold pFun (++) (++) (flip const) m
+>     in  if null pRef then m -- no pitches!
+>         else invertAt1 (head pRef) m
+>     where pFun (Note d (p,x)) = [p]
+>           pFun _ = []
 
 > retro               :: Music a -> Music a
 > retro n@(Prim _)    = n
