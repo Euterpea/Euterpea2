@@ -150,6 +150,9 @@ the MEvent framework.
 > instance ToMusic1 (Note1) where
 >     toMusic1 = id
 
+> instance ToMusic1 (AbsPitch) where
+>     toMusic1 = mMap (\a -> (pitch a, []))
+
 > note            :: Dur -> a -> Music a
 > note d p        = Prim (Note d p)
 
