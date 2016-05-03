@@ -12,6 +12,8 @@
 >     ,defParams
 >     ,playM'
 >     ,PlayParams(..)
+>     ,ChannelMapFun
+>     ,ChannelMap
 >     ) where
 
 > import Codec.Midi hiding (Tempo)

@@ -2,6 +2,7 @@ flags: {}
 packages:
 - '.'
 extra-deps:
+# PortMidi-0.1.6.0 is incompatible
 - PortMidi-0.1.5.2
 - arrows-0.4.4.1
 - Stream-0.4.7.2
