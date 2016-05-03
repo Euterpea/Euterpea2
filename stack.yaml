@@ -6,4 +6,4 @@ extra-deps:
 - arrows-0.4.4.1
 - Stream-0.4.7.2
 - lazysmallcheck-0.6
-resolver: lts-5.5
+resolver: lts-5.15
