@@ -17,7 +17,7 @@ Authors:
   Dan Winograd-Cort 
 
 Maintainers:
-  Donya Quick <donya.quick@yale.edu>
+  Donya Quick <donyaquick@gmail.com>
 
 Euterpea is a domain-specific language embedded in Haskell for 
 computer music research, education, and development, providing 
@@ -32,7 +32,7 @@ design.
 See License for licensing information.
 
 Please send questions, comments, and bug reports to Donya Quick:
-donya.quick@yale.edu
+donyaquick@gmail.com
 
 Installation instructions are available at:
 http://www.euterpea.com
