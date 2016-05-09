@@ -25,12 +25,7 @@ description:
         wide-spectrum DSL, suitable for high-level music representation, 
         algorithmic composition, and analysis; mid-level concepts such as 
         MIDI; and low-level audio processing, sound synthesis, and instrument
-        design.  It also includes a "musical user interface," a set of 
-        computer-music specific GUI widgets such as keyboards, pushbuttons, 
-        sliders, and so on.  The performance of Euterpea is intended to be 
-        as good as any other computer music language, with the goal of being 
-        able to develop real-time applications, using both MIDI and a 
-        high-performance back-end for real-time audio.  
+        design.  
 extra-source-files:
         ReadMe.txt,
         Euterpea/Examples/EnableGUI.hs
