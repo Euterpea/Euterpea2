@@ -34,7 +34,7 @@ outFile :: forall a p. (AudioSample a, Clock p) =>
         -> Double              -- ^ Duration of the wav in seconds.
         -> Signal p () a       -- ^ Signal representing the sound.
         -> IO ()
-outFile = outFileHelp id
+outFile = outFileHelp' id
 
 normList :: [Double] -> [Double]
 normList xs = map (/ mx) xs 
@@ -50,7 +50,7 @@ outFileNorm :: forall a p. (AudioSample a, Clock p) =>
          -> Double              -- ^ Duration of the wav in seconds.
          -> Signal p () a       -- ^ Signal representing the sound.
          -> IO ()
-outFileNorm = outFileHelp normList
+outFileNorm = outFileHelp' normList
 
 outFileHelp :: forall a p. (AudioSample a, Clock p) => 
             ([Double] -> [Double]) -- ^ Post-processing function.
@@ -70,6 +70,33 @@ outFileHelp f filepath dur sf =
                     channelNumber = numChannels,
                     sampleData    = array }
   in exportFile filepath aud
+  
+{-
+Alternative definition of the above that enforces a clipping behavior when 
+the value exceeds the [-1.0, 1.0] range. The overflow behavior makes it 
+very hard to debug sound modeling problems that involve certain waveforms, 
+such as saw waves. Clipping is also a more common behavior in other audio 
+software rather than overflowing or wrap-around.
+-}
+  
+outFileHelp' :: forall a p. (AudioSample a, Clock p) => 
+            ([Double] -> [Double]) -- ^ Post-processing function.
+         -> String              -- ^ Filename to write to.
+         -> Double              -- ^ Duration of the wav in seconds.
+         -> Signal p () a       -- ^ Signal representing the sound.
+         -> IO ()
+outFileHelp' f filepath dur sf = 
+  let sr          = rate (undefined :: p)
+      numChannels = numChans (undefined :: a)
+      numSamples  = truncate (dur * sr) * numChannels
+      dat         = map (fromSample . (*0.999) . clipFix) 
+                        (f (toSamples dur sf)) :: [Int32]
+      array       = listArray (0, numSamples-1) dat
+      aud = Audio { sampleRate    = truncate sr,
+                    channelNumber = numChannels,
+                    sampleData    = array }
+  in exportFile filepath aud where
+      clipFix x = if x > 1.0 then 1.0 else if x < -1.0 then -1.0 else x
 
 
 {-
