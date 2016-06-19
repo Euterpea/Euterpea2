@@ -43,12 +43,14 @@
 >     -- timing musicToMEventss
 >     metro :: Int -> Dur -> DurT
 >     metro setting dur  = 60 / (fromIntegral setting * dur)
->     applyControls :: Music1 -> Music1
->     applyControls (Modify (Tempo r) m) = scaleDurations r $ applyControls m
->     applyControls (Modify (Transpose k) m) = shiftPitches1 k $ applyControls m
->     applyControls (m1 :+: m2) = applyControls m1 :+: applyControls m2
->     applyControls (m1 :=: m2) = applyControls m1 :=: applyControls m2
->     applyControls x = x
+
+> applyControls :: Music1 -> Music1
+> applyControls (Modify (Tempo r) m) = scaleDurations r $ applyControls m
+> applyControls (Modify (Transpose k) m) = shiftPitches1 k $ applyControls m
+> applyControls (Modify x m) = Modify x $ applyControls m
+> applyControls (m1 :+: m2) = applyControls m1 :+: applyControls m2
+> applyControls (m1 :=: m2) = applyControls m1 :=: applyControls m2
+> applyControls x = x
 
 > musicToMEvents :: MContext -> Music1 -> (Performance, DurT)
 > musicToMEvents c@MContext{mcTime=t, mcDur=dt} (Prim (Note d p)) = ([noteToMEvent c d p], d*dt)
@@ -63,7 +65,9 @@
 >     in  (merge evs1 evs2, max d1 d2)
 > musicToMEvents c (Modify (Instrument i) m) = musicToMEvents c{mcInst=i} m
 > musicToMEvents c (Modify (Phrase pas) m) = phraseToMEvents c pas m
-> musicToMEvents c (Modify x m) = musicToMEvents c m -- Transpose and Tempo addressed by applyControls
+> musicToMEvents c (Modify (KeySig x y) m) = musicToMEvents c m -- KeySig causes no change
+> musicToMEvents c (Modify (Custom x) m) = musicToMEvents c m -- Custom cuases no change
+> musicToMEvents c m@(Modify x m') = musicToMEvents c $ applyControls m -- Transpose and Tempo addressed by applyControls
 
 > noteToMEvent :: MContext -> Dur -> (Pitch, [NoteAttribute]) -> MEvent
 > noteToMEvent c@(MContext ct ci cdur cvol) d (p, nas) = 
