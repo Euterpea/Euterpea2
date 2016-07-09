@@ -1,5 +1,9 @@
 name:           Euterpea
+<<<<<<< HEAD
 version:        2.0.2
+=======
+version:        2.0.1
+>>>>>>> origin/master
 Cabal-Version:  >= 1.8
 license:        BSD3
 license-file:	License
@@ -65,6 +69,10 @@ Library
         HCodecs == 0.5, 
         stm==2.4.2, 
         containers>=0.5.5.1 && <=0.5.7.1, 
+<<<<<<< HEAD
         bytestring>=0.10.4.0 && <= 0.10.9,
+=======
+        bytestring>=0.10.4.0 && <= 0.10.8.0,
+>>>>>>> origin/master
         heap == 0.6.0, 
         ghc-prim
