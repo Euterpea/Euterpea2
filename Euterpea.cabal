@@ -1,5 +1,5 @@
 name:           Euterpea
-version:        2.0.2
+version:        2.0.3
 Cabal-Version:  >= 1.8
 license:        BSD3
 license-file:	License
@@ -49,6 +49,7 @@ Library
         Euterpea.IO.MIDI.MEvent,
         Euterpea.IO.MIDI.MidiIO, 
         Euterpea.IO.MIDI.FromMidi,
+        Euterpea.IO.MIDI.FromMidi2,
         Euterpea.IO.MIDI.GeneralMidi,
         Euterpea.IO.MIDI.ToMidi,
         Euterpea.IO.MIDI.Play,
