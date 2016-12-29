@@ -1,6 +1,6 @@
 FromMidi2: an alternative Midi-to-Music conversion algorithm.
 Author: Donya Quick
-Last modified: 27-Dec-2016
+Last modified: 28-Dec-2016
 
 The goal of this module is to provide a more intelligent
 parse from MIDI files to Music structures. The fromMidi
@@ -221,10 +221,20 @@ Functions to determine the start time (onset) and duration of a Chunk.
 > chunkOnset (E e) = eTime e
 > chunkOnset (R o d) = o
 
+> chunkEnd :: Chunk -> Onset
+> chunkEnd (Seq x) = if null x then error "Empty Seq!" else chunkEnd (last x)
+> chunkEnd (Chord x) = if null x then error "Empty Chord!" else chunkEnd (head x)
+> chunkEnd (Par x) = if null x then 0 else maximum $ map chunkEnd x
+> chunkEnd (E e) = eTime e + eDur e
+> chunkEnd (R o d) = o + d
+
 > chunkDur :: Chunk -> Dur
 > chunkDur (Seq x) = if null x then error "Empty Seq!" else sum $ map chunkDur x
 > chunkDur (Chord x) = if null x then error "Empty Chord!" else chunkDur (head x)
-> chunkDur (Par x) = if null x then 0 else maximum $ map chunkDur x
+> chunkDur c@(Par x) = if null x then 0 else 
+>     let o = chunkOnset c
+>         e = chunkEnd c
+>     in  e-o
 > chunkDur (E e) = eDur e
 > chunkDur (R o d) = d
 
