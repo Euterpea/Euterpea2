@@ -5,7 +5,7 @@ module Euterpea.IO.Audio
     module Euterpea.IO.Audio.IO,
     module Euterpea.IO.Audio.Render,
     writeWav,
-	writeWavNorm
+    writeWavNorm
   ) where
 
 import Euterpea.IO.Audio.BasicSigFuns
@@ -17,7 +17,7 @@ import Euterpea.IO.Audio.Render
 writeWav fname iMap m = 
     let (d,s) = renderSF m iMap
     in  outFile fname d s
-	
+
 writeWavNorm fname iMap m = 
     let (d,s) = renderSF m iMap
     in  outFileNorm fname d s
