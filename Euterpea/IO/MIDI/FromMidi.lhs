@@ -98,7 +98,9 @@ list represents a track in the original Midi.
 >   simplifyTrack :: Int -> [(Ticks, Message)] -> [SimpleMsg]
 >   simplifyTrack icur [] = []
 >   simplifyTrack icur ((t,m):ts) = 
->     case m of (NoteOn c p v) -> 
+>     case m of (NoteOn c p 0) ->
+>                   SE (fromIntegral t, p, 0, icur, Off) : simplifyTrack icur ts
+>               (NoteOn c p v) -> 
 >                   SE (fromIntegral t, p, v, icur, On) : simplifyTrack icur ts
 >               (NoteOff c p v) -> 
 >                   SE (fromIntegral t, p, v, icur, Off) : simplifyTrack icur ts
