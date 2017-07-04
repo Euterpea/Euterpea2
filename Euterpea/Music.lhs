@@ -35,7 +35,9 @@
 >        |  Custom      String			   --  for user-specified controls
 >   deriving (Show, Eq, Ord)
 
-> data Mode        = Major | Minor 
+> data Mode = Major | Minor | 
+>             Ionian | Dorian | Phrygian | Lydian | Mixolydian | Aeolian | Locrian | 
+>             CustomMode String
 >   deriving (Show, Eq, Ord)
 
 > data InstrumentName =

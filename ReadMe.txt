@@ -1,5 +1,6 @@
-Version 2.0.3
-Last modified: 27-Dec-2016
+Version 2.0.4
+Last modified: 04-July-2017
+Website: http://www.euterpea.com
  _____      _                             
 |  ___|    | |                            
 | |__ _   _| |_ ___ _ __ _ __   ___  __ _ 
@@ -29,10 +30,18 @@ algorithmic composition, and analysis; mid-level concepts such as
 MIDI; and low-level audio processing, sound synthesis, and instrument 
 design.  
 
-See License for licensing information.
+See the License file for licensing information.
 
-Please send questions, comments, and bug reports to Donya Quick:
-donyaquick@gmail.com
+If you are experiencing a problem with Euterpea, please first check the 
+GitHub version of the library: https://github.com/Euterpea/Euterpea2
+Bugs still found in the GitHub version should be reported using the 
+issues page: https://github.com/Euterpea/Euterpea2/issues
 
-Installation instructions are available at:
-http://www.euterpea.com
+PULL REQUESTS WILL BE IGNORED. Bug fixes should be submitted through
+the issues page with a detailed explanation of the alterations.
+
+Please send any other questions and comments to Donya Quick 
+(donyaquick@gmail.com).
+
+Installation instructions and additional examples are available at
+the Euterpea website: http://www.euterpea.com

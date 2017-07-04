@@ -164,8 +164,12 @@ by the following process:
 
 > to7Bits :: (Integral a, Show a) => a -> Byte.ByteString
 > to7Bits =  Byte.pack . map (fromIntegral . binStrToNum . reverse) .
->            fixBinStrs . map (padTo 7 . reverse). reverse . 
+>            fixLeading . fixBinStrs . map (padTo 7 . reverse). reverse . 
 >            breakBinStrs 7 . reverse . padTo 8 . numToBinStr
+
+> fixLeading [] = []
+> fixLeading ("10000000":x2:xs) = fixLeading (x2:xs)
+> fixLeading x = x
 
 Pad a binary string to be a multiple of 8 bits:
 
@@ -175,8 +179,7 @@ Pad a binary string to be a multiple of 8 bits:
 Break a string into chunks of length i:
 
 > breakBinStrs :: Int -> String -> [String]
-> breakBinStrs i s = 
->     if length s <= i then [s] else take i s : breakBinStrs i (drop i s)
+> breakBinStrs i s = if length s <= i then [s] else take i s : breakBinStrs i (drop i s)
 
 Convert a number to a binary string:
 
