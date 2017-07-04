@@ -164,14 +164,10 @@ by the following process:
 
 > to7Bits :: (Integral a, Show a) => a -> Byte.ByteString
 > to7Bits =  Byte.pack . map (fromIntegral . binStrToNum . reverse) .
->            fixLeading . fixBinStrs . map (padTo 7 . reverse). reverse . 
->            breakBinStrs 7 . reverse . padTo 8 . numToBinStr
+>            fixBinStrs . map (padTo 7 . reverse). reverse . 
+>            breakBinStrs 7 . reverse . padTo 7 . numToBinStr
 
-> fixLeading [] = []
-> fixLeading ("10000000":x2:xs) = fixLeading (x2:xs)
-> fixLeading x = x
-
-Pad a binary string to be a multiple of 8 bits:
+Pad a binary string to be a multiple of i bits:
 
 > padTo :: Int -> String -> String
 > padTo i xs = if length xs `mod` i == 0 then xs else padTo i ('0':xs)
