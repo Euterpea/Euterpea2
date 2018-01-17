@@ -27,8 +27,7 @@ description:
         MIDI; and low-level audio processing, sound synthesis, and instrument
         design.  
 extra-source-files:
-        ReadMe.txt,
-        Euterpea/Examples/EnableGUI.hs
+        ReadMe.txt
 
 Library
   hs-source-dirs: .
