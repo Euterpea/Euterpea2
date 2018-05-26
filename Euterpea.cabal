@@ -1,5 +1,5 @@
 name:           Euterpea
-version:        2.0.4
+version:        2.0.5
 Cabal-Version:  >= 1.8
 license:        BSD3
 license-file:	License
@@ -63,7 +63,7 @@ Library
         deepseq>=1.3.0.2 && <=1.5, 
         random>=1.0.1.1 && <=1.2,
         PortMidi==0.1.5.2, 
-        HCodecs == 0.5, 
+        HCodecs == 0.5.1, 
         stm >= 2.4 && <2.5, 
         containers>=0.5.5.1 && <0.6, 
         bytestring>=0.10.4.0 && <= 0.10.9,
