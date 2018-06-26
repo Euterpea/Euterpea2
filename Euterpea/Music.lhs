@@ -9,18 +9,18 @@
 > type Octave = Int
 > type Pitch = (PitchClass, Octave)
 > type Dur   = Rational
-> data PitchClass  =  Cff | Cf | C | Dff | Cs | Df | Css | D | Eff | Ds 
+> data PitchClass  =  Cff | Cf | C | Dff | Cs | Df | Css | D | Eff | Ds
 >                  |  Ef | Fff | Dss | E | Ff | Es | F | Gff | Ess | Fs
->                  |  Gf | Fss | G | Aff | Gs | Af | Gss | A | Bff | As 
+>                  |  Gf | Fss | G | Aff | Gs | Af | Gss | A | Bff | As
 >                  |  Bf | Ass | B | Bs | Bss
 >      deriving (Show, Eq, Ord, Read, Enum, Bounded)
 
-> data Primitive a  =  Note Dur a        
->                   |  Rest Dur          
+> data Primitive a  =  Note Dur a
+>                   |  Rest Dur
 >      deriving (Show, Eq, Ord)
 
-> data Music a  = 
->        Prim (Primitive a)               --  primitive value 
+> data Music a  =
+>        Prim (Primitive a)               --  primitive value
 >     |  Music a :+: Music a              --  sequential composition
 >     |  Music a :=: Music a              --  parallel composition
 >     |  Modify Control (Music a)         --  modifier
@@ -35,26 +35,26 @@
 >        |  Custom      String			   --  for user-specified controls
 >   deriving (Show, Eq, Ord)
 
-> data Mode = Major | Minor | 
->             Ionian | Dorian | Phrygian | Lydian | Mixolydian | Aeolian | Locrian | 
+> data Mode = Major | Minor |
+>             Ionian | Dorian | Phrygian | Lydian | Mixolydian | Aeolian | Locrian |
 >             CustomMode String
 >   deriving (Show, Eq, Ord)
 
 > data InstrumentName =
 >      AcousticGrandPiano     | BrightAcousticPiano    | ElectricGrandPiano
 >   |  HonkyTonkPiano         | RhodesPiano            | ChorusedPiano
->   |  Harpsichord            | Clavinet               | Celesta 
->   |  Glockenspiel           | MusicBox               | Vibraphone  
+>   |  Harpsichord            | Clavinet               | Celesta
+>   |  Glockenspiel           | MusicBox               | Vibraphone
 >   |  Marimba                | Xylophone              | TubularBells
->   |  Dulcimer               | HammondOrgan           | PercussiveOrgan 
+>   |  Dulcimer               | HammondOrgan           | PercussiveOrgan
 >   |  RockOrgan              | ChurchOrgan            | ReedOrgan
 >   |  Accordion              | Harmonica              | TangoAccordion
 >   |  AcousticGuitarNylon    | AcousticGuitarSteel    | ElectricGuitarJazz
 >   |  ElectricGuitarClean    | ElectricGuitarMuted    | OverdrivenGuitar
 >   |  DistortionGuitar       | GuitarHarmonics        | AcousticBass
 >   |  ElectricBassFingered   | ElectricBassPicked     | FretlessBass
->   |  SlapBass1              | SlapBass2              | SynthBass1   
->   |  SynthBass2             | Violin                 | Viola  
+>   |  SlapBass1              | SlapBass2              | SynthBass1
+>   |  SynthBass2             | Violin                 | Viola
 >   |  Cello                  | Contrabass             | TremoloStrings
 >   |  PizzicatoStrings       | OrchestralHarp         | Timpani
 >   |  StringEnsemble1        | StringEnsemble2        | SynthStrings1
@@ -62,8 +62,8 @@
 >   |  SynthVoice             | OrchestraHit           | Trumpet
 >   |  Trombone               | Tuba                   | MutedTrumpet
 >   |  FrenchHorn             | BrassSection           | SynthBrass1
->   |  SynthBrass2            | SopranoSax             | AltoSax 
->   |  TenorSax               | BaritoneSax            | Oboe  
+>   |  SynthBrass2            | SopranoSax             | AltoSax
+>   |  TenorSax               | BaritoneSax            | Oboe
 >   |  Bassoon                | EnglishHorn            | Clarinet
 >   |  Piccolo                | Flute                  | Recorder
 >   |  PanFlute               | BlownBottle            | Shakuhachi
@@ -77,8 +77,8 @@
 >   |  FX4Atmosphere          | FX5Brightness          | FX6Goblins
 >   |  FX7Echoes              | FX8SciFi               | Sitar
 >   |  Banjo                  | Shamisen               | Koto
->   |  Kalimba                | Bagpipe                | Fiddle 
->   |  Shanai                 | TinkleBell             | Agogo  
+>   |  Kalimba                | Bagpipe                | Fiddle
+>   |  Shanai                 | TinkleBell             | Agogo
 >   |  SteelDrums             | Woodblock              | TaikoDrum
 >   |  MelodicDrum            | SynthDrum              | ReverseCymbal
 >   |  GuitarFretNoise        | BreathNoise            | Seashore
@@ -125,7 +125,7 @@
 > addVolume    :: Volume -> Music Pitch -> Music (Pitch,Volume)
 > addVolume v  = mMap (\p -> (p,v))
 
-> data NoteAttribute = 
+> data NoteAttribute =
 >         Volume  Int   --  MIDI convention: 0=min, 127=max
 >      |  Fingering Integer
 >      |  Dynamics String
@@ -155,6 +155,9 @@ the MEvent framework.
 > instance ToMusic1 (AbsPitch) where
 >     toMusic1 = mMap (\a -> (pitch a, []))
 
+> instance ToMusic1 (AbsPitch, Volume) where
+>     toMusic1 = mMap (\(p,v) -> (pitch p, [Volume v]))
+
 > note            :: Dur -> a -> Music a
 > note d p        = Prim (Note d p)
 
@@ -177,7 +180,7 @@ the MEvent framework.
 > keysig pc mo m  = Modify (KeySig pc mo) m
 
 > cff,cf,c,cs,css,dff,df,d,ds,dss,eff,ef,e,es,ess,fff,ff,f,
->   fs,fss,gff,gf,g,gs,gss,aff,af,a,as,ass,bff,bf,b,bs,bss :: 
+>   fs,fss,gff,gf,g,gs,gss,aff,af,a,as,ass,bff,bf,b,bs,bss ::
 >     Octave -> Dur -> Music Pitch
 
 > cff  o d = note d (Cff,  o);  cf   o d = note d (Cf,   o)
@@ -200,10 +203,10 @@ the MEvent framework.
 > bss  o d = note d (Bss,  o)
 
 
-> bn, wn, hn, qn, en, sn, tn, sfn, dwn, dhn, 
+> bn, wn, hn, qn, en, sn, tn, sfn, dwn, dhn,
 >     dqn, den, dsn, dtn, ddhn, ddqn, dden :: Dur
 
-> bnr, wnr, hnr, qnr, enr, snr, tnr, sfnr, dwnr, dhnr, 
+> bnr, wnr, hnr, qnr, enr, snr, tnr, sfnr, dwnr, dhnr,
 >      dqnr, denr, dsnr, dtnr, ddhnr, ddqnr, ddenr :: Music Pitch
 
 > bn    = 2;     bnr    = rest bn    --  brevis rest
@@ -228,10 +231,10 @@ the MEvent framework.
 
 The conversion for Pitch and AbsPitch differs from previous versions
 of Euterpea. In Euterpea 1.x, (C,5) was pitch number 60, which is not
-the most common interpretation. While there is no universal standard 
+the most common interpretation. While there is no universal standard
 for which octave should be octave 0, it is far more common to have the
-pitch number relationship that (C,4) = 60. Since this change has been 
-requested many times in previous versions of Euterpea, the following 
+pitch number relationship that (C,4) = 60. Since this change has been
+requested many times in previous versions of Euterpea, the following
 standard is now in place as of version 2.0.0:
 
 pitch 0 = (C,-1)
@@ -243,16 +246,16 @@ pitch 127 = (G,9)
 
 > pcToInt     :: PitchClass -> Int
 > pcToInt pc  = case pc of
->   Cff  -> -2;  Cf  -> -1;  C  -> 0;   Cs  -> 1;   Css  -> 2; 
->   Dff  -> 0;   Df  -> 1;   D  -> 2;   Ds  -> 3;   Dss  -> 4; 
->   Eff  -> 2;   Ef  -> 3;   E  -> 4;   Es  -> 5;   Ess  -> 6; 
->   Fff  -> 3;   Ff  -> 4;   F  -> 5;   Fs  -> 6;   Fss  -> 7; 
->   Gff  -> 5;   Gf  -> 6;   G  -> 7;   Gs  -> 8;   Gss  -> 9; 
+>   Cff  -> -2;  Cf  -> -1;  C  -> 0;   Cs  -> 1;   Css  -> 2;
+>   Dff  -> 0;   Df  -> 1;   D  -> 2;   Ds  -> 3;   Dss  -> 4;
+>   Eff  -> 2;   Ef  -> 3;   E  -> 4;   Es  -> 5;   Ess  -> 6;
+>   Fff  -> 3;   Ff  -> 4;   F  -> 5;   Fs  -> 6;   Fss  -> 7;
+>   Gff  -> 5;   Gf  -> 6;   G  -> 7;   Gs  -> 8;   Gss  -> 9;
 >   Aff  -> 7;   Af  -> 8;   A  -> 9;   As  -> 10;  Ass  -> 11;
 >   Bff  -> 9;   Bf  -> 10;  B  -> 11;  Bs  -> 12;  Bss  -> 13
 
 > pitch     :: AbsPitch -> Pitch
-> pitch ap  = 
+> pitch ap  =
 >     let (oct, n) = divMod ap 12
 >     in  ([C,Cs,D,Ds,E,F,Fs,G,Gs,A,As,B] !! n, oct-1)
 
@@ -288,7 +291,7 @@ pitch 127 = (G,9)
 > lineToList                    :: Music a -> [Music a]
 > lineToList (Prim (Rest 0))    = []
 > lineToList (n :+: ns)         = n : lineToList ns
-> lineToList _                  = 
+> lineToList _                  =
 >     error "lineToList: argument not created by function line"
 
 > invertAt :: Pitch -> Music Pitch -> Music Pitch
@@ -298,7 +301,7 @@ pitch 127 = (G,9)
 > invertAt1 pRef = mMap (\(p,x) -> (pitch (2 * absPitch pRef - absPitch p),x))
 
 > invert :: Music Pitch -> Music Pitch
-> invert m = 
+> invert m =
 >     let pRef = mFold pFun (++) (++) (flip const) m
 >     in  if null pRef then m -- no pitches in the structure!
 >         else invertAt (head pRef) m
@@ -306,7 +309,7 @@ pitch 127 = (G,9)
 >           pFun _ = []
 
 > invert1 :: Music (Pitch,a) -> Music (Pitch,a)
-> invert1 m = 
+> invert1 m =
 >     let pRef = mFold pFun (++) (++) (flip const) m
 >     in  if null pRef then m -- no pitches!
 >         else invertAt1 (head pRef) m
@@ -317,7 +320,7 @@ pitch 127 = (G,9)
 > retro n@(Prim _)    = n
 > retro (Modify c m)  = Modify c (retro m)
 > retro (m1 :+: m2)   = retro m2 :+: retro m1
-> retro (m1 :=: m2)   =  
+> retro (m1 :=: m2)   =
 >    let  d1 = dur m1
 >         d2 = dur m2
 >    in if d1>d2  then retro m1 :=: (rest (d1-d2) :+: retro m2)
@@ -360,7 +363,7 @@ pitch 127 = (G,9)
 
 > removeZeros :: Music a -> Music a
 > removeZeros (Prim p)      = Prim p
-> removeZeros (m1 :+: m2)   = 
+> removeZeros (m1 :+: m2)   =
 >   let  m'1  = removeZeros m1
 >        m'2  = removeZeros m2
 >   in case (m'1,m'2) of
@@ -387,12 +390,12 @@ pitch 127 = (G,9)
 >                               in d1 ++ map (+(last d1)) (durL m2)
 > durL (m1 :=: m2)           =  mergeLD (durL m1) (durL m2)
 > durL (Modify (Tempo r) m)  =  map (/r) (durL m)
-> durL (Modify _ m)          =  durL m 
+> durL (Modify _ m)          =  durL m
 
 > mergeLD :: LazyDur -> LazyDur -> LazyDur
 > mergeLD [] ld = ld
 > mergeLD ld [] = ld
-> mergeLD ld1@(d1:ds1) ld2@(d2:ds2) = 
+> mergeLD ld1@(d1:ds1) ld2@(d2:ds2) =
 >   if d1<d2  then  d1 : mergeLD ds1 ld2
 >             else  d2 : mergeLD ld1 ds2
 
@@ -407,7 +410,7 @@ pitch 127 = (G,9)
 > cutL ld (Prim (Note oldD p))  = note (minL ld oldD) p
 > cutL ld (Prim (Rest oldD))    = rest (minL ld oldD)
 > cutL ld (m1 :=: m2)           = cutL ld m1 :=: cutL ld m2
-> cutL ld (m1 :+: m2)           =  
+> cutL ld (m1 :+: m2)           =
 >    let  m'1 = cutL ld m1
 >         m'2 = cutL (map (\d -> d - dur m'1) ld) m2
 >    in m'1 :+: m'2
@@ -456,7 +459,7 @@ pitch 127 = (G,9)
 >     fmap = mMap
 
 
-> mFold ::  (Primitive a -> b) -> (b->b->b) -> (b->b->b) -> 
+> mFold ::  (Primitive a -> b) -> (b->b->b) -> (b->b->b) ->
 >           (Control -> b -> b) -> Music a -> b
 > mFold f (+:) (=:) g m =
 >   let rec = mFold f (+:) (=:) g
@@ -483,7 +486,7 @@ rather than wrapping it with Modify. The following functions allow this.
 > scaleDurations r (Prim (Rest d)) = rest (d/r)
 > scaleDurations r (m1 :+: m2) = scaleDurations r m1 :+: scaleDurations r m2
 > scaleDurations r (m1 :=: m2) = scaleDurations r m1 :=: scaleDurations r m2
-> scaleDurations r (Modify c m) = Modify c (scaleDurations r m) 
+> scaleDurations r (Modify c m) = Modify c (scaleDurations r m)
 
 > changeInstrument :: InstrumentName -> Music a -> Music a
 > changeInstrument i m = Modify (Instrument i) $ removeInstruments m
@@ -494,6 +497,3 @@ rather than wrapping it with Modify. The following functions allow this.
 > removeInstruments (m1 :+: m2) = removeInstruments m1 :+: removeInstruments m2
 > removeInstruments (m1 :=: m2) = removeInstruments m1 :=: removeInstruments m2
 > removeInstruments m = m
-
-
-
