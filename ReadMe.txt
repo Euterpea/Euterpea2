@@ -1,5 +1,5 @@
-Version 2.0.4
-Last modified: 04-July-2017
+Version 2.0.5
+Last modified: 26-June-2018
 Website: http://www.euterpea.com
  _____      _                             
 |  ___|    | |                            
@@ -10,15 +10,16 @@ Website: http://www.euterpea.com
                         | |               
                         |_|               
 
+
+Maintainers:
+  Donya Quick <donyaquick@gmail.com>
+
 Authors:
   Paul Hudak
   Eric Cheng
   Hai (Paul) Liu
   Donya Quick 
   Dan Winograd-Cort 
-
-Maintainers:
-  Donya Quick <donyaquick@gmail.com>
 
 Euterpea is a domain-specific language embedded in Haskell for 
 computer music research, education, and development, providing 
