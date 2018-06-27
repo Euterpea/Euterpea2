@@ -52,6 +52,7 @@ Library
         Euterpea.IO.MIDI.FromMidi2,
         Euterpea.IO.MIDI.GeneralMidi,
         Euterpea.IO.MIDI.ToMidi,
+        Euterpea.IO.MIDI.ToMidi2,
         Euterpea.IO.MIDI.Play,
         Euterpea.IO.MIDI.ExportMidiFile,
         Euterpea.IO.MIDI
