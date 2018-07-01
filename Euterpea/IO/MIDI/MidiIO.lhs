@@ -21,7 +21,8 @@
 >                        openInput, openOutput, readEvents,
 >                        close, writeShort, getErrorText, terminate, initialize,
 >                        PMError (NoError, BufferOverflow), PMStream,
->                        PMEvent (..), PMMsg (PMMsg))
+>                        PMEvent (..), PMMsg (PMMsg), 
+>                        encodeMsg, decodeMsg)
 > import Control.Exception (finally)
 > import Control.Concurrent
 > import Control.Concurrent.STM.TChan
@@ -272,7 +273,7 @@ DWC NOTE: Why is the time even used?  All messages get the same time?
 >           else reportError "pollMidiCB" e
 >         Left l -> do
 >           now <- getTimeNow
->           case mapMaybe (msgToMidi . message) l of
+>           case mapMaybe (msgToMidi . decodeMsg . message) l of
 >             [] -> return ()
 >             ms -> callback (now, ms)
 
@@ -296,7 +297,7 @@ DWC NOTE: Why is the time even used?  All messages get the same time?
 >           else reportError "pollMIDI" e >> return Nothing
 >         Left l -> do
 >           now <- getTimeNow
->           case mapMaybe (msgToMidi . message) l of
+>           case mapMaybe (msgToMidi . decodeMsg . message) l of
 >             [] -> return Nothing
 >             ms -> return $ Just (now, ms)
 
@@ -421,7 +422,7 @@ use one and when to use the other.
 >           if isTrackEnd msg
 >               then return ()
 >               else case midiEvent msg of
->                 Just m  -> writeMsg s t m
+>                 Just m  -> writeMsg s t $ encodeMsg m
 >                 Nothing -> return ()
 >     writeMsg s t m = do
 >               e <- writeShort s (PMEvent m (round (t * 1e3)))
@@ -486,7 +487,7 @@ use one and when to use the other.
 >             process t msg = if isTrackEnd msg
 >               then return True
 >               else case midiEvent msg of
->                 Just m  -> writeMsg t m
+>                 Just m  -> writeMsg t $ encodeMsg m
 >                 Nothing -> return False
 >             writeMsg t m = do
 >               e <- writeShort s (PMEvent m (round (t * 1e3)))
@@ -650,7 +651,7 @@ A conversion function from PortMidi PMMsgs to Codec.Midi Messages.
 >         sendEvts start now [] = loop start s fin
 >         sendEvts start now (e@(PMEvent m t):l) = do
 >           let t0 = maybe t id start
->           case msgToMidi m of
+>           case msgToMidi $ decodeMsg m of
 >             Just m' -> do
 >               done <- callback (now + fromIntegral (t - t0) / 1E3, m')
 >               if done then close s >> return () else sendEvts (Just t0) now l
