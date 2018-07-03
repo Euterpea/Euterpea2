@@ -4,14 +4,14 @@ Cabal-Version:  >= 1.8
 license:        BSD3
 license-file:	License
 copyright:      Copyright (c) 2008-2017 Euterpea authors
-category:       Sound
+category:       Sound, Music
 stability:      experimental
 build-type:     Custom
 author:         Paul Hudak <paul.hudak@yale.edu>, 
                 Eric Cheng <eric.cheng@aya.yale.edu>,
                 Hai (Paul) Liu <hai.liu@aya.yale.edu>,
-				Donya Quick <donyaquick@gmail.com>,
-				Dan Winograd-Cort <dwincort@gmail.com >
+                Donya Quick <donyaquick@gmail.com>,
+                Dan Winograd-Cort <dwincort@gmail.com >
 maintainer:     Donya Quick <donyaquick@gmail.com>
 bug-reports:    https://github.com/Euterpea/Euterpea2/issues
 homepage:       http://www.euterpea.com
