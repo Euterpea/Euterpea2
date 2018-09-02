@@ -20,9 +20,9 @@
 >                        getDefaultOutputDeviceID, getDefaultInputDeviceID,
 >                        openInput, openOutput, readEvents,
 >                        close, writeShort, getErrorText, terminate, initialize,
->                        PMError (NoError, BufferOverflow), PMStream,
->                        PMEvent (..), PMMsg (PMMsg), 
->                        encodeMsg, decodeMsg)
+>                        PMError (BufferOverflow), PMStream,
+>                        PMSuccess (NoError'NoData), PMEvent (..),
+>                        PMMsg (PMMsg), encodeMsg, decodeMsg)
 > import Control.Exception (finally)
 > import Control.Concurrent
 > import Control.Concurrent.STM.TChan
@@ -206,9 +206,9 @@ initializeMidi just initializes PortMidi
 > initializeMidi :: IO ()
 > initializeMidi = do
 >   e <- initialize
->   if e == NoError
->       then return ()
->       else reportError "initializeMidi" e
+>   case e of
+>     Right _ -> return ()
+>     Left e' -> reportError "initializeMidi" e'
 
 terminateMidi calls the stop function on all elements of outDevMap
 and clears the mapping entirely.  It also clears outPort and inPort.
@@ -260,18 +260,16 @@ DWC NOTE: Why is the time even used?  All messages get the same time?
 >     Nothing -> do
 >       r <- openInput devId
 >       case r of
->         Right e -> reportError "pollMidiCB" e
->         Left s -> addPort inPort (idid, s) >> input s
+>         Left e -> reportError "pollMidiCB" e
+>         Right s -> addPort inPort (idid, s) >> input s
 >     Just s -> input s
 >   where
 >     input :: PMStream -> IO ()
 >     input s = do
 >       e <- readEvents s
 >       case e of
->         Right e -> if e == NoError
->           then return ()
->           else reportError "pollMidiCB" e
->         Left l -> do
+>         Left e -> reportError "pollMidiCB" e
+>         Right l -> do
 >           now <- getTimeNow
 >           case mapMaybe (msgToMidi . decodeMsg . message) l of
 >             [] -> return ()
@@ -284,18 +282,16 @@ DWC NOTE: Why is the time even used?  All messages get the same time?
 >     Nothing -> do
 >       r <- openInput devId
 >       case r of
->         Right e -> reportError "pollMIDI" e >> return Nothing
->         Left s -> addPort inPort (idid, s) >> input s
+>         Left e -> reportError "pollMIDI" e >> return Nothing
+>         Right s -> addPort inPort (idid, s) >> input s
 >     Just s -> input s
 >   where
 >     input :: PMStream -> IO (Maybe (Time, [Message]))
 >     input s = do
 >       e <- readEvents s
 >       case e of
->         Right e -> if e == NoError
->           then return Nothing
->           else reportError "pollMIDI" e >> return Nothing
->         Left l -> do
+>         Left e -> reportError "pollMIDI" e >> return Nothing
+>         Right l -> do
 >           now <- getTimeNow
 >           case mapMaybe (msgToMidi . decodeMsg . message) l of
 >             [] -> return Nothing
@@ -409,8 +405,8 @@ use one and when to use the other.
 > midiOutRealTime' odid@(OutputDeviceID devId) = do
 >   s <- openOutput devId 1
 >   case s of
->     Right e -> reportError "Unable to open output device in midiOutRealTime'" e >> return Nothing
->     Left s -> do
+>     Left e -> reportError "Unable to open output device in midiOutRealTime'" e >> return Nothing
+>     Right s -> do
 >       addPort outPort (odid, s)
 >       return $ Just (process odid, finalize odid)
 >   where
@@ -427,22 +423,22 @@ use one and when to use the other.
 >     writeMsg s t m = do
 >               e <- writeShort s (PMEvent m (round (t * 1e3)))
 >               case e of
->                 NoError -> return ()
->                 _ -> reportError "midiOutRealTime'" e
+>                 Right _ -> return ()
+>                 Left e' -> reportError "midiOutRealTime'" e'
 >     finalize odid = do
 >       s <- lookupPort outPort odid
->       e <- maybe (return NoError) close s
+>       e <- maybe (return (Right NoError'NoData)) close s
 >       case e of
->         NoError -> return ()
->         _ -> reportError "midiOutRealTime'" e
+>         Right _ -> return ()
+>         Left e' -> reportError "midiOutRealTime'" e'
 
 
 > midiOutRealTime :: OutputDeviceID -> IO (Maybe ((Time, Message) -> IO (), IO ()))
 > midiOutRealTime odid@(OutputDeviceID devId) = do
 >   s <- openOutput devId 1
 >   case s of
->     Right e -> reportError "outputMidi" e >> return Nothing
->     Left s -> do
+>     Left e -> reportError "outputMidi" e >> return Nothing
+>     Right s -> do
 >       ch <- atomically newTChan
 >       wait <- newEmptyMVar
 >       fin <- newEmptyMVar
@@ -492,9 +488,9 @@ use one and when to use the other.
 >             writeMsg t m = do
 >               e <- writeShort s (PMEvent m (round (t * 1e3)))
 >               case e of
->                 NoError -> return False
->                 BufferOverflow -> putStrLn "overflow" >> threadDelay 10000 >> writeMsg t m
->                 _ -> reportError "outputMidi" e >> return True
+>                 Right _ -> return False
+>                 Left BufferOverflow -> putStrLn "overflow" >> threadDelay 10000 >> writeMsg t m
+>                 Left e' -> reportError "outputMidi" e' >> return True
 
 
 ---------------------
@@ -624,8 +620,8 @@ A conversion function from PortMidi PMMsgs to Codec.Midi Messages.
 > midiInRealTime device callback = do
 >   r <- openInput device
 >   case r of
->     Right e -> reportError "midiInRealTime" e >> return Nothing
->     Left s -> do
+>     Left e -> reportError "midiInRealTime" e >> return Nothing
+>     Right s -> do
 >       fin <- newEmptyMVar
 >       forkIO (loop Nothing s fin)
 >       return (Just (putMVar fin () >> putMVar fin ()))
@@ -638,13 +634,11 @@ A conversion function from PortMidi PMMsgs to Codec.Midi Messages.
 >         Nothing -> do
 >           e <- readEvents s
 >           case e of
->             Right e -> if e == NoError
->               then threadDelay 1000 >> loop start s fin
->               else do
+>             Left e -> do
 >                 reportError "midiInRealTime" e
 >                 callback (t, TrackEnd)
 >                 return ()
->             Left l -> do
+>             Right l -> do
 >               t <- getTimeNow
 >               sendEvts start t l
 >       where
