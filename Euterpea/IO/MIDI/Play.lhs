@@ -115,10 +115,26 @@ consuming to compute. Infinite parallelism is not supported.
 >     threadDelay $ round (closeDelay p * 1000000)
 >     terminateMidi
 >     return () where
->     resolveOutDev Nothing = unsafeOutputID 0
->     resolveOutDev (Just x) = x
 >     handleCtrlC :: IO a -> IO a
->     handleCtrlC op = onException op (stopMidiOut (resolveOutDev $ devID p) 16)
+>     handleCtrlC op = do
+>         dev <- resolveOutDev (devID p)
+>         onException op (stopMidiOut (dev) 16)
+
+Bug fix on Sept 24, 2018: on Mac, the default output device may not be zero.
+In rare cases on Mac, there are outputs but the default ID is Nothing, but
+in these cases the default always seems to be the first output in the list.
+
+> resolveOutDev Nothing = do
+>    outDevM <- getDefaultOutputDeviceID
+>    (ins,outs) <- getAllDevices
+>    let allOutDevs = map fst outs
+>    let outDev = case outDevM of
+>                     Nothing ->
+>                            if null allOutDevs then error "No MIDI outputs!"
+>                            else head allOutDevs
+>                     Just x -> unsafeOutputID x
+>    return outDev
+> resolveOutDev (Just x) = return x
 
 > stopMidiOut :: OutputDeviceID -> Channel -> IO ()
 > stopMidiOut dev i = if i<0 then threadDelay 1000000 >> terminateMidi else do
