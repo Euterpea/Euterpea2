@@ -1,0 +1,11 @@
+resolver: lts-9.8
+
+packages:
+  - ./
+
+extra-deps:
+  - arrows-0.4.4.1
+  - Stream-0.4.7.2
+  - lazysmallcheck-0.6
+  - HCodecs-0.5.1
+  - PortMidi-0.1.6.1
