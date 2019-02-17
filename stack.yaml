@@ -1,10 +1,10 @@
-resolver: lts-9.8
+resolver: lts-13.7
 
 packages:
   - ./
 
 extra-deps:
-  - arrows-0.4.4.1
+  - arrows-0.4.4.2
   - Stream-0.4.7.2
   - lazysmallcheck-0.6
   - HCodecs-0.5.1

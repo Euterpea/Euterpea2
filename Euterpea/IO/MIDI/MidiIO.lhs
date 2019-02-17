@@ -21,7 +21,7 @@
 >                        openInput, openOutput, readEvents,
 >                        close, writeShort, getErrorText, terminate, initialize,
 >                        PMError (NoError, BufferOverflow), PMStream,
->                        PMEvent (..), PMMsg (PMMsg), 
+>                        PMEvent (..), PMMsg (PMMsg),
 >                        encodeMsg, decodeMsg)
 > import Control.Exception (finally)
 > import Control.Concurrent
@@ -323,9 +323,9 @@ played.  Otherwise, it is queued for later.
 >   (pChan, out, _stop) <- getOutDev devId
 >   now <- getTimeNow
 >   let deliver t m = do
->       if t == 0
->         then out (now,m)
->         else push pChan (now+t) m
+>         if t == 0
+>           then out (now,m)
+>           else push pChan (now+t) m
 >
 >   case m of
 >     Std m -> deliver t m
