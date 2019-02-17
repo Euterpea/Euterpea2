@@ -26,12 +26,13 @@
 > import Control.Exception (finally)
 > import Control.Concurrent
 > import Control.Concurrent.STM.TChan
+> import Control.Monad (when)
 > import Control.Monad.STM (atomically)
 > import Data.IORef
 
 > import Data.Bits (shiftR, shiftL, (.|.), (.&.))
 > import Data.List (findIndex)
-> import Data.Maybe (mapMaybe)
+> import Data.Maybe (fromMaybe, mapMaybe)
 > import qualified Data.Heap as Heap
 
 > import System.IO (hPutStrLn, stderr)
@@ -153,10 +154,7 @@ by devices.  We define them here.
 >         let Just (a, h') = Heap.view h
 >         modifyIORef heapRef (\_ -> h')
 >         return a
->       peek = do
->         h <- get
->         return $ Heap.viewHead h
->
+>       peek = Heap.viewHead <$> get
 >   return $ PrioChannel get push pop peek
 
 
@@ -173,6 +171,7 @@ the stop function on all elements and clears the mapping).
 
 outDevMap is the global mapping.
 
+> {-# NOINLINE outDevMap #-}
 > outDevMap :: IORef [(OutputDeviceID,
 >                      (PrioChannel Time Message, -- priority channel
 >                       (Time, Message) -> IO (), -- sound output function
@@ -187,7 +186,9 @@ returns the Port Midi Stream associated with it).
 
 > outPort :: IORef [(OutputDeviceID, PMStream)]
 > inPort  :: IORef [(InputDeviceID,  PMStream)]
+> {-# NOINLINE outPort #-}
 > outPort = unsafePerformIO (newIORef [])
+> {-# NOINLINE inPort #-}
 > inPort  = unsafePerformIO (newIORef [])
 
 > lookupPort :: (Eq deviceid) => IORef [(deviceid, PMStream)] -> deviceid -> IO (Maybe PMStream)
@@ -322,7 +323,7 @@ played.  Otherwise, it is queued for later.
 > deliverMidiEvent devId (t,m) = do
 >   (pChan, out, _stop) <- getOutDev devId
 >   now <- getTimeNow
->   let deliver t m = do
+>   let deliver t m =
 >         if t == 0
 >           then out (now,m)
 >           else push pChan (now+t) m
@@ -346,9 +347,10 @@ priority queue whose time to play has come.
 >           Nothing     -> return ()
 >           Just (t,m)  -> do
 >             now <- getTimeNow
->             if t <= now
->               then out (now, m) >> pop pChan >> loop
->               else return ()
+>             when (t <= now) $ do
+>               out (now, m)
+>               pop pChan
+>               loop
 >   loop
 >   return ()
 
@@ -418,7 +420,7 @@ use one and when to use the other.
 >       s <- lookupPort outPort odid
 >       case s of
 >         Nothing -> error ("midiOutRealTime': port " ++ show odid ++ " is not open for output")
->         Just s -> do
+>         Just s ->
 >           if isTrackEnd msg
 >               then return ()
 >               else case midiEvent msg of
@@ -452,7 +454,7 @@ use one and when to use the other.
 >     stop ch fin = atomically (unGetTChan ch Nothing) >> takeMVar fin
 >     output s ch wait evt@(_, m) = do
 >       atomically $ writeTChan ch (Just evt)
->       if isTrackEnd m then takeMVar wait else return ()
+>       when (isTrackEnd m) $ takeMVar wait
 >     pump s ch wait fin = loop
 >       where
 >         loop = do
@@ -650,7 +652,7 @@ A conversion function from PortMidi PMMsgs to Codec.Midi Messages.
 >       where
 >         sendEvts start now [] = loop start s fin
 >         sendEvts start now (e@(PMEvent m t):l) = do
->           let t0 = maybe t id start
+>           let t0 = fromMaybe t start
 >           case msgToMidi $ decodeMsg m of
 >             Just m' -> do
 >               done <- callback (now + fromIntegral (t - t0) / 1E3, m')
