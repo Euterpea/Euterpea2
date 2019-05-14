@@ -1,5 +1,5 @@
-Version 2.0.5
-Last modified: 26-June-2018
+Version 2.0.7
+Last modified: 14-May-2019
 Website: http://www.euterpea.com
  _____      _                             
 |  ___|    | |                            
