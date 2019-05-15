@@ -1,9 +1,9 @@
 name:           Euterpea
-version:        2.0.6
+version:        2.0.7
 Cabal-Version:  >= 1.8
 license:        BSD3
 license-file:	License
-copyright:      Copyright (c) 2008-2017 Euterpea authors
+copyright:      Copyright (c) 2008-2019 Euterpea authors
 category:       Sound, Music
 stability:      experimental
 build-type:     Custom
@@ -62,7 +62,7 @@ Library
         array>=0.5.0.0 && <=0.6,
         deepseq>=1.3.0.2 && <=1.5,
         random>=1.0.1.1 && <=1.2,
-        PortMidi==0.1.6.1,
+        PortMidi==0.2.0.0,
         HCodecs == 0.5.1,
         stm >= 2.4 && <2.6,
         containers>=0.5.5.1 && <0.7,

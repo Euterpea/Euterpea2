@@ -345,7 +345,7 @@ been re-written to turn zero-duration notes into rests.
 
 > cut :: Dur -> Music a -> Music a
 > cut d m | d <= 0            = rest 0
-> cut d (Prim (Note oldD p))  =  let d' = max (min (oldD d)) 0
+> cut d (Prim (Note oldD p))  =  let d' = max (min oldD d) 0
 >                                in if d'>0 then note d p else rest 0
 > cut d (Prim (Rest oldD))    = rest (min oldD d)
 > cut d (m1 :=: m2)           = cut d m1 :=: cut d m2
