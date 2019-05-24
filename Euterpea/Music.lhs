@@ -342,19 +342,20 @@ Update as of Euterpea 2.0.7: the cut and remove functions
 previously used to permit zero-duration notes. This can cause
 some bad behavior with some synthesizers. The Note cases have
 been re-written to turn zero-duration notes into rests.
+These functions will still introduce zero-duration rests. 
+To remove all zero duration values, use removeZeros.
 
 > cut :: Dur -> Music a -> Music a
 > cut d m | d <= 0            = rest 0
 > cut d (Prim (Note oldD p))  =  let d' = max (min oldD d) 0
->                                in if d'>0 then note d p else rest 0
-> cut d (Prim (Rest oldD))    = rest (min oldD d)
+>                                in if d'>0 then note d' p else rest 0
+> cut d (Prim (Rest oldD))    = rest (max (min oldD d) 0)
 > cut d (m1 :=: m2)           = cut d m1 :=: cut d m2
 > cut d (m1 :+: m2)           =  let  m'1  = cut d m1
 >                                     m'2  = cut (d - dur m'1) m2
 >                                in   m'1 :+: m'2
 > cut d (Modify (Tempo r) m)  = tempo r (cut (d*r) m)
 > cut d (Modify c m)          = Modify c (cut d m)
-
 
 > remove :: Dur -> Music a -> Music a
 > remove d m | d <= 0            = m
