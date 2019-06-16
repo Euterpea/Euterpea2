@@ -51,14 +51,26 @@ device as set by the operating system, and using a closing offset of 1.0sec.
 
 New implementation of play using default parameters:
 
+(Bug fix note 16-June-2019: play and playDev will now avoid having
+back-to-back off/on messages with the same time stamp, which can
+cause message ordering problems with lazy playback when the messages
+finally reach the MIDI device. The solution used below is to subtract
+such a tiny duration from each MEvent that it is imperceptable yet is
+just enough to force the messages to be ordered correctly under average
+conditions. This will not fix any problems associated with large
+computation bubbles - but there is no reasonable way to compensate for
+arbitrarily large delays)
+
 > play :: (ToMusic1 a, NFData a) => Music a -> IO ()
-> play = playC defParams
+> play = playC defParams{perfAlg=fixPerf} where
+>     fixPerf = map (\e -> e{eDur = max 0 (eDur e - 0.000001)}) . perform
 
 > playS :: (ToMusic1 a, NFData a) => Music a -> IO ()
 > playS = playC defParams{strict=True}
 
 > playDev :: (ToMusic1 a, NFData a) => Int -> Music a -> IO ()
-> playDev i = playC defParams{devID = Just $ unsafeOutputID i}
+> playDev i = playC defParams{devID = Just $ unsafeOutputID i, perfAlg=fixPerf} where
+>     fixPerf = map (\e -> e{eDur = max 0 (eDur e - 0.000001)}) . perform
 
 > playDevS :: (ToMusic1 a, NFData a) => Int -> Music a -> IO()
 > playDevS i = playC defParams{strict=True, devID = Just $ unsafeOutputID i}
