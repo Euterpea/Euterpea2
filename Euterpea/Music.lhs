@@ -444,7 +444,7 @@ To remove all zero duration values, use removeZeros.
 >      |  Maracas        | ShortWhistle  | LongWhistle    | ShortGuiro
 >      |  LongGuiro      | Claves        | HiWoodBlock    | LowWoodBlock
 >      |  MuteCuica      | OpenCuica     | MuteTriangle
->      |  OpenTriangle      --  MIDI Key 82
+>      |  OpenTriangle      --  MIDI Key 81
 >    deriving (Show,Eq,Ord,Enum)
 
 > perc :: PercussionSound -> Dur -> Music Pitch
