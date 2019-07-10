@@ -66,7 +66,7 @@
 > musicToMEvents c (Modify (Instrument i) m) = musicToMEvents c{mcInst=i} m
 > musicToMEvents c (Modify (Phrase pas) m) = phraseToMEvents c pas m
 > musicToMEvents c (Modify (KeySig x y) m) = musicToMEvents c m -- KeySig causes no change
-> musicToMEvents c (Modify (Custom x) m) = musicToMEvents c m -- Custom cuases no change
+> musicToMEvents c (Modify (Custom x) m) = musicToMEvents c m -- Custom causes no change
 > musicToMEvents c m@(Modify x m') = musicToMEvents c $ applyControls m -- Transpose and Tempo addressed by applyControls
 
 > noteToMEvent :: MContext -> Dur -> (Pitch, [NoteAttribute]) -> MEvent
