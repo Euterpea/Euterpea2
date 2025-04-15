@@ -44,5 +44,4 @@ the issues page with a detailed explanation of the alterations.
 Please send any other questions and comments to Donya Quick 
 (donyaquick@gmail.com).
 
-Installation instructions and additional examples are available at
-the Euterpea website: http://www.euterpea.com
+Installation instructions and additional examples are available at: https://euterpea.github.io/
